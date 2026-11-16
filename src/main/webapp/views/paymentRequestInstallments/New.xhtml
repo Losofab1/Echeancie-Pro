@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Créer une échéance demandée</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Créer une échéance demandée</h1>
+            <h:form styleClass="crud-page">
+                <h:inputHidden id="validateCreateField" validator="#{paymentRequestInstallments.validateCreate}" value="value"/>
+                <h:panelGrid columns="2">
+                    <h:outputText value="Numéro d’échéance:"/>
+                    <h:inputText id="installmentNumber" value="#{paymentRequestInstallments.paymentRequestInstallments.installmentNumber}" title="Numéro d’échéance" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Date d’échéance (jj/mm/aaaa):"/>
+                    <h:inputText id="dueDate" value="#{paymentRequestInstallments.paymentRequestInstallments.dueDate}" title="Date d’échéance" required="true" requiredMessage="Ce champ est obligatoire." >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:inputText>
+                    <h:outputText value="Demande:"/>
+                    <h:selectOneMenu id="requestId" value="#{paymentRequestInstallments.paymentRequestInstallments.requestId}" title="Demande" required="true" requiredMessage="Ce champ est obligatoire." >
+                        <f:selectItems value="#{paymentRequests.paymentRequestsItemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{paymentRequestInstallments.create}" value="Créer"/>
+                <br />
+                <br />
+                <h:commandLink action="#{paymentRequestInstallments.listSetup}" value="Retour à la liste" immediate="true"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+            </h:form>
+    </ui:define>
+</ui:composition>

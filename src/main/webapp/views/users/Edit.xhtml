@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:pt="jakarta.faces.passthrough"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Modifier un utilisateur</ui:define>
+    <ui:define name="content">
+        <h:panelGroup id="messagePanel" layout="block">
+            <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+        </h:panelGroup>
+        <h1>Modifier un utilisateur</h1>
+        <h:form styleClass="crud-page">
+            <h:panelGrid columns="2">
+                <h:outputText value="Identifiant"/>
+                <h:outputText value="#{users.users.id}"/>
+                <h:outputLabel for="name" value="Nom complet"/>
+                <h:inputText id="name" value="#{users.users.name}" required="true"
+                             requiredMessage="Le nom est obligatoire."/>
+                <h:outputLabel for="email" value="Adresse courriel"/>
+                <h:inputText id="email" value="#{users.users.email}" required="true"
+                             requiredMessage="L’adresse courriel est obligatoire."
+                             pt:type="email" pt:autocomplete="email"/>
+                <h:outputLabel for="newPassword" value="Nouveau mot de passe"/>
+                <h:panelGroup layout="block" styleClass="input-group password-input-group">
+                    <h:inputSecret id="newPassword" value="#{users.newPassword}"
+                                   redisplay="false" styleClass="form-control"
+                                   pt:autocomplete="new-password"/>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary"
+                                data-password-toggle="true" aria-pressed="false"
+                                aria-label="Afficher le mot de passe"
+                                title="Afficher le mot de passe">
+                            <i class="fas fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </h:panelGroup>
+                <h:outputText value="Rôle"/>
+                <h:panelGroup>
+                    <h:outputText value="Administrateur principal"
+                                  rendered="#{users.users.id eq users.primaryAdministratorId}"/>
+                    <h:selectOneMenu id="role" value="#{users.users.role}" required="true"
+                                     rendered="#{users.users.id ne users.primaryAdministratorId}">
+                        <f:selectItem itemLabel="Choisir un rôle" noSelectionOption="true"/>
+                        <f:selectItem itemLabel="Administrateur" itemValue="ADMIN"/>
+                        <f:selectItem itemLabel="Gestionnaire" itemValue="MANAGER"/>
+                        <f:selectItem itemLabel="Client" itemValue="CLIENT"/>
+                    </h:selectOneMenu>
+                </h:panelGroup>
+                <h:outputLabel for="active" value="Compte actif"/>
+                <h:panelGroup>
+                    <h:outputText value="Administrateur principal — toujours actif"
+                                  rendered="#{users.users.id eq users.primaryAdministratorId}"/>
+                    <h:selectBooleanCheckbox id="active" value="#{users.users.active}"
+                                             rendered="#{users.users.id ne users.primaryAdministratorId}"/>
+                </h:panelGroup>
+                <h:outputText value="Créé le"/>
+                <h:outputText value="#{users.users.createdAt}">
+                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                </h:outputText>
+                <h:outputLabel for="clientId" value="Client associé"/>
+                <h:selectOneMenu id="clientId" value="#{users.users.clientId}">
+                    <f:selectItems value="#{clients.clientsItemsAvailableSelectOne}"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <p class="form-help">Laissez le mot de passe vide pour le conserver. Un nouveau mot de passe doit contenir au moins 8 caractères.</p>
+            <h:commandButton action="#{users.edit}" value="Enregistrer"
+                             styleClass="btn btn-primary">
+                <f:param name="jsfcrud.currentUsers"
+                         value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+            </h:commandButton>
+            <h:link outcome="/views/users/List" value="Retour à la liste"
+                    styleClass="btn btn-light"/>
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:pt="jakarta.faces.passthrough"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Mes paiements</ui:define>
+    <ui:define name="content">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h1 class="h3 mb-1 text-gray-800">Mes paiements</h1>
+                <p class="mb-0 text-gray-600">
+                    Déclarez un règlement et suivez la validation de vos paiements soumis.
+                </p>
+            </div>
+        </div>
+
+        <h:messages id="messages" styleClass="alert alert-info" infoClass="text-success"
+                    errorClass="text-danger" warnClass="text-warning"/>
+
+        <h:panelGroup layout="block" rendered="#{clientPortal.dashboard ne null}">
+            <h:panelGroup layout="block" rendered="#{clientPortal.dashboard.creditBalance gt 0}">
+                <div class="alert alert-info" role="status">
+                    Crédit client disponible :
+                    <strong><h:outputText value="#{clientPortal.dashboard.creditBalance}"/></strong>
+                    <span class="text-muted"> — à traiter par le gestionnaire.</span>
+                </div>
+            </h:panelGroup>
+
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 mb-4">
+                    <div class="card shadow h-100">
+                        <div class="card-header py-3">
+                            <h2 class="h6 m-0 font-weight-bold text-primary">Soumettre un paiement</h2>
+                        </div>
+                        <div class="card-body">
+                            <h:form styleClass="crud-page" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <h:outputLabel for="installment" value="Échéance"/>
+                                    <h:selectOneMenu id="installment" value="#{clientPortal.installmentId}"
+                                                     styleClass="form-control" required="true"
+                                                     requiredMessage="Sélectionnez une échéance.">
+                                        <f:selectItem itemLabel="Choisir une échéance" noSelectionOption="true"/>
+                                        <f:selectItems value="#{clientPortal.installmentSelectItems}"/>
+                                    </h:selectOneMenu>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputLabel for="paymentAmount" value="Montant versé"/>
+                                    <h:inputText id="paymentAmount" value="#{clientPortal.paymentAmount}"
+                                                 styleClass="form-control" pt:type="number"
+                                                 pt:min="1" pt:step="1" required="true"
+                                                 requiredMessage="Le montant est obligatoire.">
+                                        <f:validateLongRange minimum="1"/>
+                                    </h:inputText>
+                                    <small class="form-text text-muted">
+                                        Un versement partiel laisse un solde. Un excédent est affecté aux échéances suivantes,
+                                        puis conservé comme crédit à traiter par le gestionnaire.
+                                    </small>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputLabel for="paymentDate" value="Date du paiement"/>
+                                    <h:inputText id="paymentDate" value="#{clientPortal.paymentDate}"
+                                                 styleClass="form-control" pt:type="date"
+                                                 pt:max="#{clientPortal.maximumPaymentDate}" required="true">
+                                        <f:convertDateTime type="localDate" pattern="yyyy-MM-dd"/>
+                                    </h:inputText>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputLabel for="paymentChannel" value="Moyen de paiement"/>
+                                    <h:selectOneMenu id="paymentChannel" value="#{clientPortal.paymentChannel}"
+                                                     styleClass="form-control" required="true">
+                                        <f:selectItem itemLabel="Choisir un moyen" noSelectionOption="true"/>
+                                        <f:selectItem itemLabel="Virement bancaire" itemValue="BANK_TRANSFER"/>
+                                        <f:selectItem itemLabel="Mobile money" itemValue="MOBILE_MONEY"/>
+                                    </h:selectOneMenu>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputLabel for="paymentProof" value="Justificatif du paiement"/>
+                                    <h:inputFile id="paymentProof" value="#{clientPortal.paymentProof}"
+                                                 styleClass="form-control-file"
+                                                 pt:accept="image/jpeg,image/png,application/pdf"
+                                                 required="true"
+                                                 requiredMessage="Ajoutez la photo ou le reçu du paiement.">
+                                    </h:inputFile>
+                                    <small class="form-text text-muted">
+                                        Image JPG/PNG ou PDF, 5 Mo maximum.
+                                    </small>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputLabel for="paymentReference" value="Référence de paiement"/>
+                                    <h:inputText id="paymentReference" value="#{clientPortal.paymentReference}"
+                                                 styleClass="form-control" pt:maxlength="80"/>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputLabel for="paymentNote" value="Note"/>
+                                    <h:inputTextarea id="paymentNote" value="#{clientPortal.paymentNote}"
+                                                     styleClass="form-control" pt:maxlength="240" rows="2">
+                                        <f:validateLength maximum="240"/>
+                                    </h:inputTextarea>
+                                </div>
+                                <h:commandButton action="#{clientPortal.submitPayment}"
+                                                 value="Soumettre le paiement"
+                                                 styleClass="btn btn-success"
+                                                 disabled="#{empty clientPortal.dashboard.openInstallments}"/>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="client-submissions" class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h2 class="h6 m-0 font-weight-bold text-primary">Mes paiements soumis</h2>
+                </div>
+                <div class="card-body table-responsive">
+                    <h:form>
+                        <h:dataTable value="#{clientPortal.dashboard.submissions}" var="item"
+                                     styleClass="table table-bordered table-hover">
+                            <h:column><f:facet name="header">Soumis le</f:facet>
+                                <h:outputText value="#{item.submittedAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                </h:outputText>
+                            </h:column>
+                            <h:column><f:facet name="header">Payé le</f:facet>
+                                <h:outputText value="#{item.paymentDate}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </h:column>
+                            <h:column><f:facet name="header">Échéancier / échéance</f:facet>
+                                <h:outputText value="#{item.scheduleReference}"/> —
+                                <h:outputText value="#{item.installmentNumber}"/>
+                            </h:column>
+                            <h:column><f:facet name="header">Montant</f:facet>
+                                <h:outputText value="#{item.amount}"/>
+                                <h:panelGroup rendered="#{item.creditAmount gt 0}">
+                                    <br/><small class="text-warning">
+                                        Crédit en attente : <h:outputText value="#{item.creditAmount}"/>
+                                    </small>
+                                </h:panelGroup>
+                            </h:column>
+                            <h:column><f:facet name="header">Moyen</f:facet>
+                                <h:outputText value="#{item.channelLabel}"/>
+                            </h:column>
+                            <h:column><f:facet name="header">Référence</f:facet>
+                                <h:outputText value="#{item.reference}"/>
+                            </h:column>
+                            <h:column><f:facet name="header">Statut / réponse</f:facet>
+                                <span class="badge #{item.status eq 'APPROVED' ? 'badge-success' : item.status eq 'REJECTED' ? 'badge-danger' : 'badge-warning'}">
+                                    <h:outputText value="#{item.statusLabel}"/>
+                                </span>
+                                <h:panelGroup rendered="#{not empty item.reason}">
+                                    <br/><small class="text-danger">
+                                        <h:outputText value="#{item.reason}"/>
+                                    </small>
+                                </h:panelGroup>
+                                <h:panelGroup rendered="#{item.reviewedAt ne null}">
+                                    <br/><small class="text-muted">
+                                        <h:outputText value="#{item.reviewedAt}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                        </h:outputText>
+                                    </small>
+                                </h:panelGroup>
+                            </h:column>
+                            <h:column><f:facet name="header">Quittance</f:facet>
+                                <h:commandButton action="#{paymentScheduleReport.downloadReceiptPdf}"
+                                                 value="Télécharger PDF"
+                                                 rendered="#{item.status eq 'APPROVED'}"
+                                                 styleClass="btn btn-outline-primary btn-sm">
+                                    <f:param name="submissionId" value="#{item.id}"/>
+                                </h:commandButton>
+                                <h:outputText value="Disponible après validation"
+                                              rendered="#{item.status ne 'APPROVED'}"
+                                              styleClass="text-muted small"/>
+                            </h:column>
+                            <h:column><f:facet name="header">Justificatif</f:facet>
+                                <h:commandButton action="#{paymentScheduleReport.downloadPaymentProof}"
+                                                 value="Télécharger"
+                                                 rendered="#{item.proofAvailable}"
+                                                 styleClass="btn btn-outline-secondary btn-sm">
+                                    <f:param name="submissionId" value="#{item.id}"/>
+                                </h:commandButton>
+                                <h:outputText value="—" rendered="#{not item.proofAvailable}"/>
+                            </h:column>
+                        </h:dataTable>
+                    </h:form>
+                    <h:outputText value="Aucun paiement soumis." rendered="#{empty clientPortal.dashboard.submissions}"/>
+                </div>
+            </div>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

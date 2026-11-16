@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html lang="fr"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:h="jakarta.faces.html"
+      xmlns:pt="jakarta.faces.passthrough">
+    <h:head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Connexion | Echean</title>
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css"/>
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/startbootstrap-sb-admin-2@4.1.4/css/sb-admin-2.min.css"/>
+        <link rel="stylesheet"
+              href="#{facesContext.externalContext.requestContextPath}/jsfcrud.css"/>
+    </h:head>
+    <h:body styleClass="auth-page">
+        <main class="auth-card">
+            <div class="auth-brand">
+                <i class="fas fa-calendar-check"></i>
+                <span>Echean</span>
+            </div>
+            <h1>Connexion</h1>
+            <p>Connectez-vous pour accéder à la gestion des paiements.</p>
+            <h:messages globalOnly="false" errorClass="auth-error"
+                        infoClass="auth-error"/>
+            <h:form>
+                <div class="form-group">
+                    <h:outputLabel for="email" value="Adresse courriel"/>
+                    <h:inputText id="email" value="#{auth.email}" required="true"
+                                 requiredMessage="Saisissez votre adresse courriel."
+                                 styleClass="form-control form-control-user"
+                                 pt:autocomplete="username"/>
+                </div>
+                <div class="form-group">
+                    <h:outputLabel for="password" value="Mot de passe"/>
+                    <div class="input-group password-input-group">
+                        <h:inputSecret id="password" value="#{auth.password}" required="true"
+                                       requiredMessage="Saisissez votre mot de passe."
+                                       redisplay="false"
+                                       styleClass="form-control form-control-user"
+                                       pt:autocomplete="current-password"/>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-secondary"
+                                    data-password-toggle="true" aria-pressed="false"
+                                    aria-label="Afficher le mot de passe"
+                                    title="Afficher le mot de passe">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <h:commandButton action="#{auth.login}" value="Se connecter"
+                                 styleClass="btn btn-primary btn-user btn-block"/>
+            </h:form>
+        </main>
+        <script src="#{facesContext.externalContext.requestContextPath}/password-toggle.js"></script>
+    </h:body>
+</html>

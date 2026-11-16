@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Créer un paiement</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Créer un paiement</h1>
+            <h:form styleClass="crud-page">
+                <h:inputHidden id="validateCreateField" validator="#{paymentSubmissions.validateCreate}" value="value"/>
+                <h:panelGrid columns="2">
+                    <h:outputText value="Montant:"/>
+                    <h:inputText id="amount" value="#{paymentSubmissions.paymentSubmissions.amount}" title="Montant" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Canal:"/>
+                    <h:inputText id="channel" value="#{paymentSubmissions.paymentSubmissions.channel}" title="Canal" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Référence:"/>
+                    <h:inputText id="reference" value="#{paymentSubmissions.paymentSubmissions.reference}" title="Référence" />
+                    <h:outputText value="Note:"/>
+                    <h:inputText id="note" value="#{paymentSubmissions.paymentSubmissions.note}" title="Note" />
+                    <h:outputText value="Statut:"/>
+                    <h:inputText id="status" value="#{paymentSubmissions.paymentSubmissions.status}" title="Statut" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Motif:"/>
+                    <h:inputText id="reason" value="#{paymentSubmissions.paymentSubmissions.reason}" title="Motif" />
+                    <h:outputText value="Soumis le (jj/mm/aaaa hh:mm):"/>
+                    <h:inputText id="submittedAt" value="#{paymentSubmissions.paymentSubmissions.submittedAt}" title="Soumis le" required="true" requiredMessage="Ce champ est obligatoire." >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:inputText>
+                    <h:outputText value="Traité le (jj/mm/aaaa hh:mm):"/>
+                    <h:inputText id="reviewedAt" value="#{paymentSubmissions.paymentSubmissions.reviewedAt}" title="Traité le" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:inputText>
+                    <h:outputText value="Échéance:"/>
+                    <h:selectOneMenu id="installmentId" value="#{paymentSubmissions.paymentSubmissions.installmentId}" title="Échéance" required="true" requiredMessage="Ce champ est obligatoire." >
+                        <f:selectItems value="#{installments.installmentsItemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputText value="Traité par:"/>
+                    <h:selectOneMenu id="reviewedBy" value="#{paymentSubmissions.paymentSubmissions.reviewedBy}" title="Traité par" >
+                        <f:selectItems value="#{users.usersItemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputText value="Soumis par:"/>
+                    <h:selectOneMenu id="submittedBy" value="#{paymentSubmissions.paymentSubmissions.submittedBy}" title="SubmittedBy" required="true" requiredMessage="Ce champ est obligatoire." >
+                        <f:selectItems value="#{users.usersItemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{paymentSubmissions.create}" value="Créer"/>
+                <br />
+                <br />
+                <h:commandLink action="#{paymentSubmissions.listSetup}" value="Retour à la liste" immediate="true"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+            </h:form>
+    </ui:define>
+</ui:composition>

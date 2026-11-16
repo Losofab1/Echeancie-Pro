@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Fiche client</ui:define>
+    <ui:define name="content">
+<h1>Fiche client</h1>
+            <h:messages errorStyle="color: red" infoStyle="color: green"/>
+            <h:panelGrid columns="2">
+                <h:outputText value="Identifiant"/>
+                <h:outputText value="#{clients.clients.id}"/>
+                <h:outputText value="Nom"/>
+                <h:outputText value="#{clients.clients.name}"/>
+                <h:outputText value="Courriel"/>
+                <h:outputText value="#{clients.clients.email}"/>
+                <h:outputText value="Telephone"/>
+                <h:outputText value="#{clients.clients.phone}"/>
+                <h:outputText value="Rappels SMS"/>
+                <h:outputText value="#{clients.clients.smsRemindersEnabled}"/>
+                <h:outputText value="Rappels par courriel"/>
+                <h:outputText value="#{clients.clients.emailRemindersEnabled}"/>
+            </h:panelGrid>
+            <h:form styleClass="crud-page">
+                <h:commandLink action="#{clients.editSetup}" value="Modifier">
+                    <f:param name="jsfcrud.currentClients" value="#{clients.clients.id}"/>
+                </h:commandLink>
+                <br/>
+                <h:commandLink action="#{clients.listSetup}" value="Retour aux clients" immediate="true"/>
+            </h:form>
+    </ui:define>
+</ui:composition>

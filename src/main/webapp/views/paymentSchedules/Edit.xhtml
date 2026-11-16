@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Modifier un échéancier</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Modifier un échéancier</h1>
+            <h:form styleClass="crud-page">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Identifiant:"/>
+                    <h:outputText value="#{paymentSchedules.paymentSchedules.id}" title="Identifiant" />
+                    <h:outputText value="Référence:"/>
+                    <h:inputText id="reference" value="#{paymentSchedules.paymentSchedules.reference}" title="Référence" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Montant total:"/>
+                    <h:inputText id="total" value="#{paymentSchedules.paymentSchedules.total}" title="Montant total" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Statut de confirmation:"/>
+                    <h:inputText id="confirmationStatus" value="#{paymentSchedules.paymentSchedules.confirmationStatus}" title="Statut de confirmation" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Créé le (jj/mm/aaaa hh:mm):"/>
+                    <h:inputText id="createdAt" value="#{paymentSchedules.paymentSchedules.createdAt}" title="Créé le" required="true" requiredMessage="Ce champ est obligatoire." >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:inputText>
+                    <h:outputText value="Demandes de paiement:"/>
+                    <h:selectOneMenu id="paymentRequests" value="#{paymentSchedules.paymentSchedules.paymentRequests}" title="Demandes de paiement" >
+                        <f:selectItems value="#{paymentRequests.paymentRequestsItemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputText value="Échéances:"/>
+                    <h:selectManyListbox id="installmentsList" value="#{paymentSchedules.paymentSchedules.jsfcrud_transform[jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method.collectionToArray][jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method.arrayToList].installmentsList}" title="InstallmentsList" size="6" converter="#{installments.converter}" >
+                        <f:selectItems value="#{installments.installmentsItemsAvailableSelectMany}"/>
+                    </h:selectManyListbox>
+                    <h:outputText value="Client:"/>
+                    <h:selectOneMenu id="clientId" value="#{paymentSchedules.paymentSchedules.clientId}" title="Client" required="true" requiredMessage="Ce champ est obligatoire." >
+                        <f:selectItems value="#{clients.clientsItemsAvailableSelectOne}"/>
+                        <f:ajax event="change" execute="@this" render="selectedClientName"/>
+                    </h:selectOneMenu>
+                    <h:outputText id="selectedClientName" value="Client sélectionné : #{paymentSchedules.paymentSchedules.clientId.name}" styleClass="form-text text-primary font-weight-bold"/>
+                    <h:outputText value="Gestionnaire:"/>
+                    <h:selectOneMenu id="managerId" value="#{paymentSchedules.paymentSchedules.managerId}" title="Gestionnaire" required="true" requiredMessage="Ce champ est obligatoire." >
+                        <f:selectItems value="#{users.usersItemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{paymentSchedules.edit}" value="Save">
+                    <f:param name="jsfcrud.currentPaymentSchedules" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSchedules.paymentSchedules][paymentSchedules.converter].jsfcrud_invoke}"/>
+                </h:commandLink>
+                <br />
+                <br />
+                <h:commandLink action="#{paymentSchedules.detailSetup}" value="Consulter" immediate="true">
+                    <f:param name="jsfcrud.currentPaymentSchedules" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSchedules.paymentSchedules][paymentSchedules.converter].jsfcrud_invoke}"/>
+                </h:commandLink>
+                <br />
+                <h:commandLink action="#{paymentSchedules.listSetup}" value="Retour à la liste" immediate="true"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+            </h:form>
+    </ui:define>
+</ui:composition>

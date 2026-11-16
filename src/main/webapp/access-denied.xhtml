@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Accès refusé</ui:define>
+    <ui:define name="content">
+        <div class="crud-page">
+            <h1>Accès refusé</h1>
+            <p>Votre rôle ne permet pas d’accéder à cette page.</p>
+            <h:link outcome="/welcomeJSF.xhtml" value="Retour au tableau de bord"
+                    styleClass="btn btn-primary"/>
+        </div>
+    </ui:define>
+</ui:composition>

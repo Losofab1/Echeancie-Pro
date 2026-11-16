@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:pt="jakarta.faces.passthrough"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Mes demandes</ui:define>
+    <ui:define name="content">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h1 class="h3 mb-1 text-gray-800">Mes demandes</h1>
+                <p class="mb-0 text-gray-600">
+                    Formulez une nouvelle demande d’échéancier et suivez la réponse de l’équipe.
+                </p>
+            </div>
+        </div>
+
+        <h:messages id="messages" styleClass="alert alert-info" infoClass="text-success"
+                    errorClass="text-danger" warnClass="text-warning"/>
+
+        <h:panelGroup layout="block" rendered="#{clientPortal.dashboard ne null}">
+            <div class="row">
+                <div class="col-xl-6 col-lg-6 mb-4">
+                    <div class="card shadow h-100">
+                        <div class="card-header py-3">
+                            <h2 class="h6 m-0 font-weight-bold text-primary">Nouvelle demande d’échéancier</h2>
+                        </div>
+                        <div class="card-body">
+                            <h:form styleClass="crud-page">
+                                <div class="form-group">
+                                    <h:outputLabel for="requestTotal" value="Montant total demandé"/>
+                                    <h:inputText id="requestTotal" value="#{clientPortal.requestTotal}"
+                                                 styleClass="form-control" pt:type="number"
+                                                 pt:min="1" pt:step="1" required="true"
+                                                 requiredMessage="Le montant est obligatoire.">
+                                        <f:validateLongRange minimum="1"/>
+                                    </h:inputText>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputLabel for="installmentCount" value="Nombre d’échéances souhaité"/>
+                                    <h:inputText id="installmentCount"
+                                                 value="#{clientPortal.requestInstallmentCount}"
+                                                 styleClass="form-control" pt:type="number"
+                                                 pt:min="1" pt:max="#{clientPortal.maximumInstallmentCount}"
+                                                 required="true">
+                                        <f:validateLongRange minimum="1"
+                                                             maximum="#{clientPortal.maximumInstallmentCount}"/>
+                                        <f:ajax event="change"
+                                                listener="#{clientPortal.updateProposedInstallments}"
+                                                execute="@this proposedDates" render="proposedDates"/>
+                                    </h:inputText>
+                                </div>
+                                <h:panelGroup id="proposedDates" layout="block">
+                                    <ui:repeat value="#{clientPortal.proposedInstallments}"
+                                               var="proposed" varStatus="row">
+                                        <div class="form-group">
+                                            <h:outputLabel for="dueDate"
+                                                value="Date proposée — échéance #{row.index + 1}"/>
+                                            <h:inputText id="dueDate" value="#{proposed.dueDate}"
+                                                         styleClass="form-control" pt:type="date"
+                                                         pt:min="#{clientPortal.minimumProposedDate}">
+                                                    <f:convertDateTime type="localDate"
+                                                                       pattern="yyyy-MM-dd"/>
+                                            </h:inputText>
+                                        </div>
+                                    </ui:repeat>
+                                    <small class="form-text text-muted mb-3">
+                                        La première échéance est prévue entre un mois et un an après la demande.
+                                        Chaque intervalle suivant doit aussi être compris entre un mois et un an.
+                                    </small>
+                                </h:panelGroup>
+                                <div class="form-group">
+                                    <h:outputLabel for="requestNote" value="Note"/>
+                                    <h:inputTextarea id="requestNote" value="#{clientPortal.requestNote}"
+                                                     styleClass="form-control" pt:maxlength="300" rows="3">
+                                        <f:validateLength maximum="300"/>
+                                    </h:inputTextarea>
+                                </div>
+                                <h:commandButton action="#{clientPortal.createPaymentRequest}"
+                                                 value="Envoyer la demande"
+                                                 styleClass="btn btn-primary"/>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="client-requests" class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h2 class="h6 m-0 font-weight-bold text-primary">Mes demandes</h2>
+                </div>
+                <div class="card-body table-responsive">
+                    <h:dataTable value="#{clientPortal.dashboard.requests}" var="item"
+                                 styleClass="table table-bordered table-hover">
+                        <h:column><f:facet name="header">Créée le</f:facet>
+                            <h:outputText value="#{item.createdAt}"><f:convertDateTime pattern="dd/MM/yyyy HH:mm"/></h:outputText>
+                        </h:column>
+                        <h:column><f:facet name="header">Montant demandé</f:facet>
+                            <h:outputText value="#{item.total}"/>
+                        </h:column>
+                        <h:column><f:facet name="header">Échéances souhaitées</f:facet>
+                            <h:outputText value="#{item.installmentCount}"/>
+                        </h:column>
+                        <h:column><f:facet name="header">Dates proposées</f:facet>
+                            <ui:repeat value="#{item.proposedDueDates}" var="date"
+                                       varStatus="dateRow">
+                                <h:outputText value="Échéance #{dateRow.index + 1} : "/>
+                                <h:outputText value="#{date}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText><br/>
+                            </ui:repeat>
+                        </h:column>
+                        <h:column><f:facet name="header">Statut</f:facet>
+                            <span class="badge #{item.status eq 'APPROVED' ? 'badge-success' : item.status eq 'REJECTED' ? 'badge-danger' : 'badge-warning'}">
+                                <h:outputText value="#{item.statusLabel}"/>
+                            </span>
+                        </h:column>
+                        <h:column><f:facet name="header">Réponse de l’équipe</f:facet>
+                            <h:panelGroup rendered="#{item.status eq 'APPROVED'}">
+                                <h:outputText value="Montant accepté : #{item.agreedTotal}"/>
+                                <h:panelGroup rendered="#{not empty item.scheduleReference}">
+                                    <br/>Échéancier : <h:outputText value="#{item.scheduleReference}"/>
+                                </h:panelGroup>
+                            </h:panelGroup>
+                            <h:outputText value="En attente de traitement."
+                                          rendered="#{item.status eq 'PENDING'}"/>
+                            <h:outputText value="Demande refusée."
+                                          rendered="#{item.status eq 'REJECTED'}"/>
+                            <h:panelGroup rendered="#{item.reviewedAt ne null}">
+                                <br/>
+                                <small class="text-muted">
+                                    <h:outputText value="#{item.reviewedAt}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm"/>
+                                    </h:outputText>
+                                </small>
+                            </h:panelGroup>
+                        </h:column>
+                    </h:dataTable>
+                    <h:outputText value="Aucune demande." rendered="#{empty clientPortal.dashboard.requests}"/>
+                </div>
+            </div>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

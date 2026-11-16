@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Paiements soumis</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Paiements soumis</h1>
+            <h:form styleClass="jsfcrud_list_form">
+                <h:outputText escape="false" value="Aucun élément à afficher&lt;br /&gt;" rendered="#{paymentSubmissions.pagingInfo.itemCount == 0}" />
+                <h:panelGroup rendered="#{paymentSubmissions.pagingInfo.itemCount > 0}">
+                    <h:outputText value="Éléments #{paymentSubmissions.pagingInfo.firstItem + 1} à #{paymentSubmissions.pagingInfo.lastItem} sur #{paymentSubmissions.pagingInfo.itemCount}"/>&#160;
+                    <h:commandLink action="#{paymentSubmissions.prev}" value="Précédent #{paymentSubmissions.pagingInfo.batchSize}" rendered="#{paymentSubmissions.pagingInfo.firstItem >= paymentSubmissions.pagingInfo.batchSize}"/>&#160;
+                    <h:commandLink action="#{paymentSubmissions.next}" value="Suivant #{paymentSubmissions.pagingInfo.batchSize}" rendered="#{paymentSubmissions.pagingInfo.lastItem + paymentSubmissions.pagingInfo.batchSize &lt;= paymentSubmissions.pagingInfo.itemCount}"/>&#160;
+                    <h:commandLink action="#{paymentSubmissions.next}" value="Restant #{paymentSubmissions.pagingInfo.itemCount - paymentSubmissions.pagingInfo.lastItem}"
+                                   rendered="#{paymentSubmissions.pagingInfo.lastItem &lt; paymentSubmissions.pagingInfo.itemCount &amp;&amp; paymentSubmissions.pagingInfo.lastItem + paymentSubmissions.pagingInfo.batchSize > paymentSubmissions.pagingInfo.itemCount}"/>
+                    <div class="table-responsive crud-table-wrap"><h:dataTable value="#{paymentSubmissions.paymentSubmissionsItems}" var="item" border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px" styleClass="table crud-table align-middle">
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Client"/>
+                            </f:facet>
+                            <h:outputText value="#{item.installmentId.scheduleId.clientId.name}" styleClass="font-weight-bold"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Montant"/>
+                            </f:facet>
+                            <h:outputText value="#{item.amount}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Canal"/>
+                            </f:facet>
+                            <h:outputText value="#{item.channel}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Référence"/>
+                            </f:facet>
+                            <h:outputText value="#{item.reference}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Note"/>
+                            </f:facet>
+                            <h:outputText value="#{item.note}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Statut"/>
+                            </f:facet>
+                            <h:outputText value="#{item.status}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Motif"/>
+                            </f:facet>
+                            <h:outputText value="#{item.reason}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Soumis le"/>
+                            </f:facet>
+                            <h:outputText value="#{item.submittedAt}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Traité le"/>
+                            </f:facet>
+                            <h:outputText value="#{item.reviewedAt}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Échéance"/>
+                            </f:facet>
+                            <h:outputText value="#{item.installmentId.scheduleId.reference} — échéance #{item.installmentId.installmentNumber}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Traité par"/>
+                            </f:facet>
+                            <h:outputText value="#{item.reviewedBy.name}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="SubmittedBy"/>
+                            </f:facet>
+                            <h:outputText value="#{item.submittedBy.name}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Quittance"/>
+                            </f:facet>
+                            <h:commandButton action="#{paymentScheduleReport.downloadReceiptPdf}"
+                                             value="Télécharger PDF"
+                                             rendered="#{item.status eq 'APPROVED'}"
+                                             styleClass="btn btn-outline-primary btn-sm">
+                                <f:param name="submissionId" value="#{item.id}"/>
+                            </h:commandButton>
+                            <h:outputText value="Disponible après validation"
+                                          rendered="#{item.status ne 'APPROVED'}"
+                                          styleClass="text-muted small"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText escape="false" value="&#160;"/>
+                            </f:facet>
+                            <h:commandLink value="Consulter" action="#{paymentSubmissions.detailSetup}">
+                                <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                            </h:commandLink>
+                            <h:outputText value="Archivé" styleClass="badge badge-success"
+                                          rendered="#{item.status eq 'APPROVED'}"/>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Modifier" action="#{paymentSubmissions.editSetup}"
+                                           rendered="#{item.status ne 'APPROVED'}">
+                                <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                            </h:commandLink>
+                            <h:outputText value=" " rendered="#{item.status ne 'APPROVED'}"/>
+                            <h:commandLink value="Supprimer" action="#{paymentSubmissions.destroy}"
+                                           rendered="#{item.status ne 'APPROVED'}">
+                                <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                            </h:commandLink>
+                        </h:column>
+
+                    </h:dataTable></div>
+                </h:panelGroup>
+                <br />
+                <h:commandLink action="#{paymentSubmissions.createSetup}" value="Créer un paiement"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+
+            </h:form>
+    </ui:define>
+</ui:composition>

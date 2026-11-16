@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Détail du courriel</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Détail du courriel</h1>
+            <h:form styleClass="crud-page">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Identifiant:"/>
+                    <h:outputText value="#{emailOutbox.emailOutbox.id}" title="Identifiant" />
+                    <h:outputText value="Clé d’événement:"/>
+                    <h:outputText value="#{emailOutbox.emailOutbox.eventKey}" title="Clé d’événement" />
+                    <h:outputText value="Destinataire:"/>
+                    <h:outputText value="#{emailOutbox.emailOutbox.recipient}" title="Destinataire" />
+                    <h:outputText value="Objet:"/>
+                    <h:outputText value="#{emailOutbox.emailOutbox.subject}" title="Objet" />
+                    <h:outputText value="Contenu:"/>
+                    <h:outputText value="#{emailOutbox.emailOutbox.body}" title="Contenu" />
+                    <h:outputText value="Statut:"/>
+                    <h:outputText value="#{emailOutbox.emailOutbox.status}" title="Statut" />
+                    <h:outputText value="Nombre de tentatives:"/>
+                    <h:outputText value="#{emailOutbox.emailOutbox.attemptCount}" title="Nombre de tentatives" />
+                    <h:outputText value="Prochaine tentative:"/>
+                    <h:outputText value="#{emailOutbox.emailOutbox.nextAttemptAt}" title="Prochaine tentative" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                    <h:outputText value="Réservé le:"/>
+                    <h:outputText value="#{emailOutbox.emailOutbox.claimedAt}" title="Réservé le" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                    <h:outputText value="Créé le:"/>
+                    <h:outputText value="#{emailOutbox.emailOutbox.createdAt}" title="Créé le" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                    <h:outputText value="Envoyé le:"/>
+                    <h:outputText value="#{emailOutbox.emailOutbox.sentAt}" title="Envoyé le" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                    <h:outputText value="Dernière erreur:"/>
+                    <h:outputText value="#{emailOutbox.emailOutbox.lastError}" title="Dernière erreur" />
+
+
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{emailOutbox.destroy}" value="Supprimer">
+                    <f:param name="jsfcrud.currentEmailOutbox" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][emailOutbox.emailOutbox][emailOutbox.converter].jsfcrud_invoke}" />
+                </h:commandLink>
+                <br />
+                <br />
+                <h:commandLink action="#{emailOutbox.editSetup}" value="Modifier">
+                    <f:param name="jsfcrud.currentEmailOutbox" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][emailOutbox.emailOutbox][emailOutbox.converter].jsfcrud_invoke}" />
+                </h:commandLink>
+                <br />
+                <h:commandLink action="#{emailOutbox.createSetup}" value="Créer un courriel" />
+                <br />
+                <h:commandLink action="#{emailOutbox.listSetup}" value="Retour à la liste"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+            </h:form>
+    </ui:define>
+</ui:composition>

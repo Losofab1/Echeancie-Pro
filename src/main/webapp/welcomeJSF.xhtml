@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Tableau de bord</ui:define>
+    <ui:define name="content">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h1 class="h3 mb-1 text-gray-800">Tableau de bord</h1>
+                <p class="mb-0 text-gray-600">Gestion des échéanciers et suivi des paiements.</p>
+            </div>
+            <h:form styleClass="dashboard-action">
+                <h:commandLink action="#{paymentSchedules.createSetup}"
+                               value="Créer un échéancier"
+                               styleClass="btn btn-primary btn-sm shadow-sm"/>
+            </h:form>
+        </div>
+
+        <div class="row">
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Paiements</div>
+                                <div class="h5 mb-2 font-weight-bold text-gray-800">Échéanciers</div>
+                                <p class="mb-3 text-gray-600 small">Consulter et gérer les échéanciers de paiement.</p>
+                                <h:form><h:commandLink action="#{paymentSchedules.listSetup}" value="Ouvrir le module" styleClass="btn btn-primary btn-sm"/></h:form>
+                            </div>
+                            <div class="col-auto"><i class="fas fa-calendar-alt fa-2x text-gray-300"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Paiements</div>
+                                <div class="h5 mb-2 font-weight-bold text-gray-800">Demandes de paiement</div>
+                                <p class="mb-3 text-gray-600 small">Suivre les demandes enregistrées par les clients.</p>
+                                <h:form><h:commandLink action="#{paymentRequests.listSetup}" value="Ouvrir le module" styleClass="btn btn-success btn-sm"/></h:form>
+                            </div>
+                            <div class="col-auto"><i class="fas fa-file-invoice-dollar fa-2x text-gray-300"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Paiements</div>
+                                <div class="h5 mb-2 font-weight-bold text-gray-800">Échéances</div>
+                                <p class="mb-3 text-gray-600 small">Consulter les montants et dates d’échéance.</p>
+                                <h:form><h:commandLink action="#{installments.listSetup}" value="Ouvrir le module" styleClass="btn btn-info btn-sm text-white"/></h:form>
+                            </div>
+                            <div class="col-auto"><i class="fas fa-list-ol fa-2x text-gray-300"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Paiements</div>
+                                <div class="h5 mb-2 font-weight-bold text-gray-800">Paiements soumis</div>
+                                <p class="mb-3 text-gray-600 small">Consulter les paiements soumis pour traitement.</p>
+                                <h:form><h:commandLink action="#{paymentSubmissions.listSetup}" value="Ouvrir le module" styleClass="btn btn-warning btn-sm"/></h:form>
+                            </div>
+                            <div class="col-auto"><i class="fas fa-money-check-alt fa-2x text-gray-300"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Référentiels</div>
+                                <div class="h5 mb-2 font-weight-bold text-gray-800">Clients</div>
+                                <p class="mb-3 text-gray-600 small">Accéder aux dossiers et coordonnées des clients.</p>
+                                <h:form><h:commandLink action="#{clients.listSetup}" value="Ouvrir le module" styleClass="btn btn-primary btn-sm"/></h:form>
+                            </div>
+                            <div class="col-auto"><i class="fas fa-users fa-2x text-gray-300"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-secondary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Référentiels</div>
+                                <div class="h5 mb-2 font-weight-bold text-gray-800">Utilisateurs</div>
+                                <p class="mb-3 text-gray-600 small">Consulter les comptes utilisateurs de l’application.</p>
+                                <h:form><h:commandLink action="#{users.listSetup}" value="Ouvrir le module" styleClass="btn btn-secondary btn-sm"/></h:form>
+                            </div>
+                            <div class="col-auto"><i class="fas fa-user-cog fa-2x text-gray-300"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Opérations</div>
+                                <div class="h5 mb-2 font-weight-bold text-gray-800">Échéances demandées</div>
+                                <p class="mb-3 text-gray-600 small">Examiner les échéances associées aux demandes.</p>
+                                <h:form><h:commandLink action="#{paymentRequestInstallments.listSetup}" value="Ouvrir le module" styleClass="btn btn-info btn-sm text-white"/></h:form>
+                            </div>
+                            <div class="col-auto"><i class="fas fa-tasks fa-2x text-gray-300"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Opérations</div>
+                                <div class="h5 mb-2 font-weight-bold text-gray-800">Demandes de clients</div>
+                                <p class="mb-3 text-gray-600 small">Traiter les demandes de création de client.</p>
+                                <h:form><h:commandLink action="#{clientCreationRequests.listSetup}" value="Ouvrir le module" styleClass="btn btn-warning btn-sm"/></h:form>
+                            </div>
+                            <div class="col-auto"><i class="fas fa-user-plus fa-2x text-gray-300"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-danger shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Opérations</div>
+                                <div class="h5 mb-2 font-weight-bold text-gray-800">File des courriels</div>
+                                <p class="mb-3 text-gray-600 small">Consulter l’état des courriels à envoyer.</p>
+                                <h:form><h:commandLink action="#{emailOutbox.listSetup}" value="Ouvrir le module" styleClass="btn btn-danger btn-sm"/></h:form>
+                            </div>
+                            <div class="col-auto"><i class="fas fa-envelope fa-2x text-gray-300"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+xmlns:pt="jakarta.faces.passthrough"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Créer une demande de paiement</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Créer une demande de paiement</h1>
+            <h:form styleClass="crud-page">
+                <h:inputHidden id="validateCreateField" validator="#{paymentRequests.validateCreate}" value="value"/>
+                <h:panelGrid columns="2">
+                    <h:outputText value="Montant total:"/>
+                    <h:inputText id="total" value="#{paymentRequests.paymentRequests.total}" title="Montant total" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Nombre d’échéances:"/>
+                    <h:inputText id="installmentCount" value="#{paymentRequests.paymentRequests.installmentCount}" title="Nombre d’échéances" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Statut:"/>
+                    <h:inputText id="status" value="#{paymentRequests.paymentRequests.status}" title="Statut" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Note:"/>
+                    <h:inputTextarea id="note" value="#{paymentRequests.paymentRequests.note}"
+                                     title="Note" rows="3" cols="40" pt:maxlength="300">
+                        <f:validateLength maximum="300"/>
+                    </h:inputTextarea>
+                    <h:outputText value="Canal:"/>
+                    <h:inputText id="channel" value="#{paymentRequests.paymentRequests.channel}" title="Canal" />
+                    <h:outputText value="Créé le (jj/mm/aaaa hh:mm):"/>
+                    <h:inputText id="createdAt" value="#{paymentRequests.paymentRequests.createdAt}" title="Créé le" required="true" requiredMessage="Ce champ est obligatoire." >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:inputText>
+                    <h:outputText value="Traité le (jj/mm/aaaa hh:mm):"/>
+                    <h:inputText id="reviewedAt" value="#{paymentRequests.paymentRequests.reviewedAt}" title="Traité le" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:inputText>
+                    <h:outputText value="Montant convenu:"/>
+                    <h:inputText id="agreedTotal" value="#{paymentRequests.paymentRequests.agreedTotal}" title="Montant convenu" />
+                    <h:outputText value="Client:"/>
+                    <h:selectOneMenu id="clientId" value="#{paymentRequests.paymentRequests.clientId}" title="Client" required="true" requiredMessage="Ce champ est obligatoire." >
+                        <f:selectItems value="#{clients.clientsItemsAvailableSelectOne}"/>
+                        <f:ajax event="change" execute="@this" render="selectedClientName"/>
+                    </h:selectOneMenu>
+                    <h:outputText id="selectedClientName" value="Client sélectionné : #{paymentRequests.paymentRequests.clientId.name}" styleClass="form-text text-primary font-weight-bold"/>
+                    <h:outputText value="Échéancier:"/>
+                    <h:selectOneMenu id="scheduleId" value="#{paymentRequests.paymentRequests.scheduleId}" title="Échéancier" >
+                        <f:selectItems value="#{paymentSchedules.paymentSchedulesItemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputText value="Demandeur:"/>
+                    <h:selectOneMenu id="requesterId" value="#{paymentRequests.paymentRequests.requesterId}" title="Demandeur" required="true" requiredMessage="Ce champ est obligatoire." >
+                        <f:selectItems value="#{users.usersItemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputText value="Traité par:"/>
+                    <h:selectOneMenu id="reviewedBy" value="#{paymentRequests.paymentRequests.reviewedBy}" title="Traité par" >
+                        <f:selectItems value="#{users.usersItemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{paymentRequests.create}" value="Créer la demande"
+                               styleClass="btn btn-primary"/>
+                <br />
+                <br />
+                <h:commandLink action="#{paymentRequests.listSetup}" value="Retour à la liste"
+                               immediate="true" styleClass="btn btn-outline-secondary"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true"
+                               styleClass="btn btn-link" />
+
+            </h:form>
+    </ui:define>
+</ui:composition>

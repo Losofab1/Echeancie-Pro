@@ -1,0 +1,19 @@
+# Secrets et configuration locale
+.env
+.env.*
+!.env.example
+
+# Builds et dumps
+target/
+*.war
+*.dump
+
+# IDE
+.vscode/
+nbproject/
+nb-configuration.xml
+faces-config.NavData
+
+# Système
+.DS_Store
+Thumbs.db

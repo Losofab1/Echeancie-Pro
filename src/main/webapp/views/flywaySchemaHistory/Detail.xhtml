@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Détail de la migration</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Détail de la migration</h1>
+            <h:form styleClass="crud-page">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Rang d’installation:"/>
+                    <h:outputText value="#{flywaySchemaHistory.flywaySchemaHistory.installedRank}" title="Rang d’installation" />
+                    <h:outputText value="Version:"/>
+                    <h:outputText value="#{flywaySchemaHistory.flywaySchemaHistory.version}" title="Version" />
+                    <h:outputText value="Description:"/>
+                    <h:outputText value="#{flywaySchemaHistory.flywaySchemaHistory.description}" title="Description" />
+                    <h:outputText value="Type:"/>
+                    <h:outputText value="#{flywaySchemaHistory.flywaySchemaHistory.type}" title="Type" />
+                    <h:outputText value="Script:"/>
+                    <h:outputText value="#{flywaySchemaHistory.flywaySchemaHistory.script}" title="Script" />
+                    <h:outputText value="Somme de contrôle:"/>
+                    <h:outputText value="#{flywaySchemaHistory.flywaySchemaHistory.checksum}" title="Somme de contrôle" />
+                    <h:outputText value="Installé par:"/>
+                    <h:outputText value="#{flywaySchemaHistory.flywaySchemaHistory.installedBy}" title="Installé par" />
+                    <h:outputText value="Installé le:"/>
+                    <h:outputText value="#{flywaySchemaHistory.flywaySchemaHistory.installedOn}" title="Installé le" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                    <h:outputText value="Durée d’exécution:"/>
+                    <h:outputText value="#{flywaySchemaHistory.flywaySchemaHistory.executionTime}" title="Durée d’exécution" />
+                    <h:outputText value="Réussite:"/>
+                    <h:outputText value="#{flywaySchemaHistory.flywaySchemaHistory.success}" title="Réussite" />
+
+
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{flywaySchemaHistory.destroy}" value="Supprimer">
+                    <f:param name="jsfcrud.currentFlywaySchemaHistory" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][flywaySchemaHistory.flywaySchemaHistory][flywaySchemaHistory.converter].jsfcrud_invoke}" />
+                </h:commandLink>
+                <br />
+                <br />
+                <h:commandLink action="#{flywaySchemaHistory.editSetup}" value="Modifier">
+                    <f:param name="jsfcrud.currentFlywaySchemaHistory" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][flywaySchemaHistory.flywaySchemaHistory][flywaySchemaHistory.converter].jsfcrud_invoke}" />
+                </h:commandLink>
+                <br />
+                <h:commandLink action="#{flywaySchemaHistory.createSetup}" value="Créer une migration" />
+                <br />
+                <h:commandLink action="#{flywaySchemaHistory.listSetup}" value="Retour à la liste"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+            </h:form>
+    </ui:define>
+</ui:composition>

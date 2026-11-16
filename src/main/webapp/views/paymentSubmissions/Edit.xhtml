@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:pt="jakarta.faces.passthrough"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Modifier un paiement</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Modifier un paiement</h1>
+            <h:form styleClass="crud-page">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Identifiant:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.id}" title="Identifiant" />
+                    <h:outputText value="Montant:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.amount}" title="Montant" />
+                    <h:outputText value="Canal:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.channel}" title="Canal" />
+                    <h:outputText value="Référence:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.reference}" title="Référence" />
+                    <h:outputText value="Note:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.note}" title="Note" />
+                    <h:outputText value="Statut:"/>
+                    <h:selectOneMenu id="status" value="#{paymentSubmissions.paymentSubmissions.status}"
+                                     title="Statut" required="true">
+                        <f:selectItem itemLabel="En attente" itemValue="PENDING"/>
+                        <f:selectItem itemLabel="Approuvé" itemValue="APPROVED"/>
+                        <f:selectItem itemLabel="Rejeté" itemValue="REJECTED"/>
+                    </h:selectOneMenu>
+                    <h:outputText value="Motif:"/>
+                    <h:inputText id="reason" value="#{paymentSubmissions.paymentSubmissions.reason}"
+                                 title="Motif" pt:maxlength="240">
+                        <f:validateLength maximum="240"/>
+                    </h:inputText>
+                    <h:outputText value=""/>
+                    <h:outputText value="Obligatoire en cas de rejet." styleClass="form-help"/>
+                    <h:outputText value="Soumis le (jj/mm/aaaa hh:mm):"/>
+                    <h:outputText id="submittedAt" value="#{paymentSubmissions.paymentSubmissions.submittedAt}" title="Soumis le">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                    <h:outputText value="Traité le (jj/mm/aaaa hh:mm):"/>
+                    <h:outputText id="reviewedAt" value="#{paymentSubmissions.paymentSubmissions.reviewedAt}" title="Traité le">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                    <h:outputText value="Client:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.installmentId.scheduleId.clientId.name}" title="Client"/>
+                    <h:outputText value="Échéance:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.installmentId.scheduleId.reference} — échéance #{paymentSubmissions.paymentSubmissions.installmentId.installmentNumber}"/>
+                    <h:outputText value="Traité par:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.reviewedBy.name}"/>
+                    <h:outputText value="Soumis par:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.submittedBy.name}"/>
+
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{paymentSubmissions.edit}" value="Enregistrer la décision">
+                    <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                </h:commandLink>
+                <br />
+                <br />
+                <h:commandLink action="#{paymentSubmissions.detailSetup}" value="Consulter"
+                               immediate="true" rendered="#{not paymentSubmissions.managerReviewMode}">
+                    <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                </h:commandLink>
+                <br />
+                <h:link outcome="/manager/dashboard.xhtml"
+                        value="Retour à la file de traitement"
+                        rendered="#{paymentSubmissions.managerReviewMode}"/>
+                <h:commandLink action="#{paymentSubmissions.listSetup}"
+                               value="Retour à la liste" immediate="true"
+                               rendered="#{not paymentSubmissions.managerReviewMode}"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+            </h:form>
+    </ui:define>
+</ui:composition>

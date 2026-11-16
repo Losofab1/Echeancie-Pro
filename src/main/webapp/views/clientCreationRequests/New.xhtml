@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Créer une demande de client</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Créer une demande de client</h1>
+            <h:form styleClass="crud-page">
+                <h:inputHidden id="validateCreateField" validator="#{clientCreationRequests.validateCreate}" value="value"/>
+                <h:panelGrid columns="2">
+                    <h:outputText value="Nom:"/>
+                    <h:inputText id="name" value="#{clientCreationRequests.clientCreationRequests.name}" title="Nom" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Courriel:"/>
+                    <h:inputText id="email" value="#{clientCreationRequests.clientCreationRequests.email}" title="Courriel" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Téléphone:"/>
+                    <h:inputText id="phone" value="#{clientCreationRequests.clientCreationRequests.phone}" title="Téléphone" />
+                    <h:outputText value="Statut:"/>
+                    <h:inputText id="status" value="#{clientCreationRequests.clientCreationRequests.status}" title="Statut" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Créé le (jj/mm/aaaa hh:mm):"/>
+                    <h:inputText id="createdAt" value="#{clientCreationRequests.clientCreationRequests.createdAt}" title="Créé le" required="true" requiredMessage="Ce champ est obligatoire." >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:inputText>
+                    <h:outputText value="Traité le (jj/mm/aaaa hh:mm):"/>
+                    <h:inputText id="reviewedAt" value="#{clientCreationRequests.clientCreationRequests.reviewedAt}" title="Traité le" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:inputText>
+                    <h:outputText value="Créé par:"/>
+                    <h:selectOneMenu id="createdBy" value="#{clientCreationRequests.clientCreationRequests.createdBy}" title="Créé par" >
+                        <f:selectItems value="#{users.usersItemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputText value="Traité par:"/>
+                    <h:selectOneMenu id="reviewedBy" value="#{clientCreationRequests.clientCreationRequests.reviewedBy}" title="Traité par" >
+                        <f:selectItems value="#{users.usersItemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{clientCreationRequests.create}" value="Créer"/>
+                <br />
+                <br />
+                <h:commandLink action="#{clientCreationRequests.listSetup}" value="Retour à la liste" immediate="true"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+            </h:form>
+    </ui:define>
+</ui:composition>

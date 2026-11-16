@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Détail de la demande de paiement</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Détail de la demande de paiement</h1>
+            <h:form styleClass="crud-page">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Identifiant:"/>
+                    <h:outputText value="#{paymentRequests.paymentRequests.id}" title="Identifiant" />
+                    <h:outputText value="Montant total:"/>
+                    <h:outputText value="#{paymentRequests.paymentRequests.total}" title="Montant total" />
+                    <h:outputText value="Nombre d’échéances:"/>
+                    <h:outputText value="#{paymentRequests.paymentRequests.installmentCount}" title="Nombre d’échéances" />
+                    <h:outputText value="Statut:"/>
+                    <h:outputText value="#{paymentRequests.paymentRequests.status}" title="Statut" />
+                    <h:outputText value="Note:"/>
+                    <h:outputText value="#{paymentRequests.paymentRequests.note}" title="Note" />
+                    <h:outputText value="Canal:"/>
+                    <h:outputText value="#{paymentRequests.paymentRequests.channel}" title="Canal" />
+                    <h:outputText value="Créé le:"/>
+                    <h:outputText value="#{paymentRequests.paymentRequests.createdAt}" title="Créé le" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                    <h:outputText value="Traité le:"/>
+                    <h:outputText value="#{paymentRequests.paymentRequests.reviewedAt}" title="Traité le" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                    <h:outputText value="Montant convenu:"/>
+                    <h:outputText value="#{paymentRequests.paymentRequests.agreedTotal}" title="Montant convenu" />
+                    <h:outputText value="Client:"/>
+                    <h:panelGroup>
+                        <h:outputText value="#{paymentRequests.paymentRequests.clientId.name}"/>
+                        <h:panelGroup rendered="#{paymentRequests.paymentRequests.clientId != null}">
+                            <h:outputText value=" ("/>
+                            <h:commandLink value="Consulter" action="#{clients.detailSetup}">
+                                <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentClients" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests.clientId][clients.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="Demandes de paiement"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Modifier" action="#{clients.editSetup}">
+                                <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentClients" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests.clientId][clients.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="Demandes de paiement"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Supprimer" action="#{clients.destroy}">
+                                <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentClients" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests.clientId][clients.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="Demandes de paiement"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" )"/>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                    <h:outputText value="Échéancier:"/>
+                    <h:panelGroup>
+                        <h:outputText value="#{paymentRequests.paymentRequests.scheduleId.reference}"/>
+                        <h:panelGroup rendered="#{paymentRequests.paymentRequests.scheduleId != null}">
+                            <h:outputText value=" ("/>
+                            <h:commandLink value="Consulter" action="#{paymentSchedules.detailSetup}">
+                                <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentPaymentSchedules" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests.scheduleId][paymentSchedules.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="Demandes de paiement"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Modifier" action="#{paymentSchedules.editSetup}"
+                                           rendered="#{paymentRequests.paymentRequests.status ne 'APPROVED' and paymentRequests.paymentRequests.status ne 'CONFIRMED'}">
+                                <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentPaymentSchedules" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests.scheduleId][paymentSchedules.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="Demandes de paiement"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Supprimer" action="#{paymentSchedules.destroy}"
+                                           rendered="#{paymentRequests.paymentRequests.status ne 'APPROVED' and paymentRequests.paymentRequests.status ne 'CONFIRMED'}">
+                                <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentPaymentSchedules" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests.scheduleId][paymentSchedules.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="Demandes de paiement"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" )"/>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                    <h:outputText value="Demandeur:"/>
+                    <h:panelGroup>
+                        <h:outputText value="#{paymentRequests.paymentRequests.requesterId.name}"/>
+                        <h:panelGroup rendered="#{paymentRequests.paymentRequests.requesterId != null}">
+                            <h:outputText value=" ("/>
+                            <h:commandLink value="Consulter" action="#{users.detailSetup}">
+                                <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests.requesterId][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="Demandes de paiement"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Modifier" action="#{users.editSetup}">
+                                <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests.requesterId][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="Demandes de paiement"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Supprimer" action="#{users.destroy}">
+                                <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests.requesterId][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="Demandes de paiement"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" )"/>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                    <h:outputText value="Traité par:"/>
+                    <h:panelGroup>
+                        <h:outputText value="#{paymentRequests.paymentRequests.reviewedBy.name}"/>
+                        <h:panelGroup rendered="#{paymentRequests.paymentRequests.reviewedBy != null}">
+                            <h:outputText value=" ("/>
+                            <h:commandLink value="Consulter" action="#{users.detailSetup}">
+                                <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests.reviewedBy][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="Demandes de paiement"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Modifier" action="#{users.editSetup}">
+                                <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests.reviewedBy][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="Demandes de paiement"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Supprimer" action="#{users.destroy}">
+                                <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests.reviewedBy][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="Demandes de paiement"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" )"/>
+                        </h:panelGroup>
+                    </h:panelGroup>
+
+                    <h:outputText value="Échéances demandées:" />
+                    <h:panelGroup>
+                        <h:outputText rendered="#{empty paymentRequests.paymentRequests.paymentRequestInstallmentsList}" value="(No Items)"/>
+                        <h:dataTable value="#{paymentRequests.paymentRequests.paymentRequestInstallmentsList}" var="item" 
+                                     border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px" 
+                                     rendered="#{not empty paymentRequests.paymentRequests.paymentRequestInstallmentsList}">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Client"/>
+                                </f:facet>
+                                <h:outputText value="#{paymentRequests.paymentRequests.clientId.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Numéro d’échéance"/>
+                                </f:facet>
+                                <h:outputText value="#{item.installmentNumber}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Date d’échéance"/>
+                                </f:facet>
+                                <h:outputText value="#{item.dueDate}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Demande"/>
+                                </f:facet>
+                                <h:outputText value="#{item.requestId}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText escape="false" value="&#160;"/>
+                                </f:facet>
+                                <h:commandLink value="Consulter" action="#{paymentRequestInstallments.detailSetup}">
+                                    <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentRequestInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentRequestInstallments.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="Demandes de paiement" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Modifier" action="#{paymentRequestInstallments.editSetup}"
+                                                 rendered="#{paymentRequests.paymentRequests.status ne 'APPROVED' and paymentRequests.paymentRequests.status ne 'CONFIRMED'}">
+                                    <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentRequestInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentRequestInstallments.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="Demandes de paiement" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Supprimer" action="#{paymentRequestInstallments.destroy}"
+                                                 rendered="#{paymentRequests.paymentRequests.status ne 'APPROVED' and paymentRequests.paymentRequests.status ne 'CONFIRMED'}">
+                                    <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentRequestInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentRequestInstallments.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="Demandes de paiement" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentRequestsController" />
+                                </h:commandLink>
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGroup>
+
+                </h:panelGrid>
+                <br />
+                <h:outputText value="Archivée — demande approuvée, historique non modifiable"
+                              styleClass="badge badge-success"
+                              rendered="#{paymentRequests.paymentRequests.status eq 'APPROVED' or paymentRequests.paymentRequests.status eq 'CONFIRMED'}"/>
+                <h:commandLink action="#{paymentRequests.destroy}" value="Supprimer"
+                               rendered="#{paymentRequests.paymentRequests.status ne 'APPROVED' and paymentRequests.paymentRequests.status ne 'CONFIRMED'}">
+                    <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}" />
+                </h:commandLink>
+                <br />
+                <br />
+                <h:commandLink action="#{paymentRequests.editSetup}" value="Modifier"
+                               rendered="#{paymentRequests.paymentRequests.status ne 'APPROVED' and paymentRequests.paymentRequests.status ne 'CONFIRMED'}">
+                    <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentRequests.paymentRequests][paymentRequests.converter].jsfcrud_invoke}" />
+                </h:commandLink>
+                <br />
+                <h:commandLink action="#{paymentRequests.createSetup}" value="Créer une demande de paiement" />
+                <br />
+                <h:commandLink action="#{paymentRequests.listSetup}" value="Retour à la liste"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+            </h:form>
+    </ui:define>
+</ui:composition>

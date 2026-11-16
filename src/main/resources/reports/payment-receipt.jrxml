@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="payment-receipt"
+              pageWidth="595" pageHeight="842" orientation="Portrait"
+              columnWidth="547" leftMargin="24" rightMargin="24" topMargin="32" bottomMargin="32"
+              whenNoDataType="AllSectionsNoDetail"
+              uuid="69342280-70ae-4356-9f60-5b13d4dc363c">
+    <parameter name="receiptNumber" class="java.lang.String"/>
+    <parameter name="clientName" class="java.lang.String"/>
+    <parameter name="clientEmail" class="java.lang.String"/>
+    <parameter name="scheduleReference" class="java.lang.String"/>
+    <parameter name="installmentNumber" class="java.lang.Short"/>
+    <parameter name="installmentAmount" class="java.lang.Long"/>
+    <parameter name="amount" class="java.lang.Long"/>
+    <parameter name="creditAmount" class="java.lang.Long"/>
+    <parameter name="allocationDetails" class="java.lang.String"/>
+    <parameter name="channel" class="java.lang.String"/>
+    <parameter name="paymentReference" class="java.lang.String"/>
+    <parameter name="paidAt" class="java.util.Date"/>
+    <parameter name="paymentDate" class="java.util.Date"/>
+    <parameter name="managerName" class="java.lang.String"/>
+    <title>
+        <band height="176">
+            <staticText>
+                <reportElement x="0" y="0" width="547" height="38" forecolor="#243B53"
+                               uuid="22016268-7525-431f-949a-617a490360d1"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="22" isBold="true"/>
+                </textElement>
+                <text><![CDATA[QUITTANCE DE PAIEMENT]]></text>
+            </staticText>
+            <line>
+                <reportElement x="0" y="48" width="547" height="1" forecolor="#D9E2EC"
+                               uuid="50606d90-dc4f-4de4-9cfe-5f6c20107036"/>
+            </line>
+            <staticText>
+                <reportElement x="0" y="64" width="145" height="22" forecolor="#52606D"
+                               uuid="3a5ccfc0-ef59-498c-84bc-15653b30066d"/>
+                <text><![CDATA[Numéro de quittance :]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="145" y="64" width="402" height="22"
+                               uuid="ef93826f-b220-45dc-8a5e-bab850f2d265"/>
+                <textFieldExpression><![CDATA["Q-" + $P{receiptNumber}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="92" width="145" height="22" forecolor="#52606D"
+                               uuid="cbf1ac4b-f299-4cd7-9880-d884623b6cb8"/>
+                <text><![CDATA[Date de validation :]]></text>
+            </staticText>
+            <textField pattern="dd/MM/yyyy HH:mm">
+                <reportElement x="145" y="92" width="402" height="22"
+                               uuid="b19cefae-5e8b-4865-84bf-a213b67fcc23"/>
+                <textFieldExpression><![CDATA[$P{paidAt}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement mode="Opaque" x="0" y="132" width="547" height="30"
+                               backcolor="#E8F5E9" forecolor="#1B5E20"
+                               uuid="b71b3c23-6ca9-4ad9-b23f-d6baaa7622c1"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <text><![CDATA[PAIEMENT VALIDÉ]]></text>
+            </staticText>
+        </band>
+    </title>
+    <detail>
+        <band height="420">
+            <staticText>
+                <reportElement x="0" y="0" width="547" height="26" forecolor="#243B53"
+                               uuid="2048ba92-2f4d-4987-8576-877dd6027f83"/>
+                <textElement>
+                    <font size="14" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Informations du client]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="0" y="36" width="145" height="22" forecolor="#52606D"
+                               uuid="435dd39d-d314-4dbc-b81f-b62e14f37d02"/>
+                <text><![CDATA[Nom :]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="145" y="36" width="402" height="22"
+                               uuid="2d439a26-d7a9-448e-98eb-bba140f213d1"/>
+                <textFieldExpression><![CDATA[$P{clientName}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="64" width="145" height="22" forecolor="#52606D"
+                               uuid="14cde474-fdca-4367-a114-f212a596455c"/>
+                <text><![CDATA[Courriel :]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="145" y="64" width="402" height="22"
+                               uuid="49394bb5-1089-4e16-a4dd-2d60ba52b18d"/>
+                <textFieldExpression><![CDATA[$P{clientEmail}]]></textFieldExpression>
+            </textField>
+            <line>
+                <reportElement x="0" y="102" width="547" height="1" forecolor="#D9E2EC"
+                               uuid="cd27c1fa-3745-44fd-925e-bdfd14355786"/>
+            </line>
+            <staticText>
+                <reportElement x="0" y="116" width="145" height="22" forecolor="#52606D"
+                               uuid="b0c1a094-a259-4fa8-986e-c90078e9c5c6"/>
+                <text><![CDATA[Échéancier :]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="145" y="116" width="402" height="22"
+                               uuid="b8664c78-a531-42fc-ac68-4474114285bd"/>
+                <textFieldExpression><![CDATA[$P{scheduleReference}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="144" width="145" height="22" forecolor="#52606D"
+                               uuid="b410844a-f51b-42ca-9c6a-64ac28d36b70"/>
+                <text><![CDATA[Numéro d’échéance :]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="145" y="144" width="402" height="22"
+                               uuid="075a0d26-a77d-4c79-8f02-d4455a254d30"/>
+                <textFieldExpression><![CDATA[$P{installmentNumber}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="172" width="145" height="22" forecolor="#52606D"
+                               uuid="ed075d41-2101-4f85-99d5-28a5e7e36bec"/>
+                <text><![CDATA[Montant affecté :]]></text>
+            </staticText>
+            <textField pattern="#,##0">
+                <reportElement x="145" y="172" width="402" height="22"
+                               uuid="f62c9d65-bce6-42f3-8db9-fcb687677a9e"/>
+                <textFieldExpression><![CDATA[$P{installmentAmount}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="210" width="145" height="28" forecolor="#52606D"
+                               uuid="58df2b5b-c437-473f-a37c-2b18e5aa189e"/>
+                <text><![CDATA[Montant reçu :]]></text>
+            </staticText>
+            <textField pattern="#,##0">
+                <reportElement mode="Opaque" x="145" y="204" width="402" height="36"
+                               backcolor="#F0F4F8" forecolor="#243B53"
+                               uuid="84f5b622-d8b3-4f53-8e90-f19d808e26bd"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{amount}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="252" width="145" height="22" forecolor="#52606D"
+                               uuid="dfad51f9-b0fd-4cb0-a1bf-da9af9f480cb"/>
+                <text><![CDATA[Moyen de paiement :]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="145" y="252" width="402" height="22"
+                               uuid="8247c866-aa17-4930-a526-a49cfd04d18b"/>
+                <textFieldExpression><![CDATA[$P{channel}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="280" width="145" height="22" forecolor="#52606D"
+                               uuid="29c2704e-c53a-440e-a36b-f1ee131f287d"/>
+                <text><![CDATA[Référence :]]></text>
+            </staticText>
+            <textField isBlankWhenNull="true">
+                <reportElement x="145" y="280" width="402" height="22"
+                               uuid="855f4454-c1bf-43d9-ae51-5f790660b786"/>
+                <textFieldExpression><![CDATA[$P{paymentReference}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="310" width="145" height="22" forecolor="#52606D"
+                               uuid="f7b984aa-8834-4af0-9738-4af4960cbfd1"/>
+                <text><![CDATA[Payé le :]]></text>
+            </staticText>
+            <textField pattern="dd/MM/yyyy">
+                <reportElement x="145" y="310" width="402" height="22"
+                               uuid="8b431e52-4405-4cf5-967a-3ca07391713b"/>
+                <textFieldExpression><![CDATA[$P{paymentDate}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="340" width="145" height="44" forecolor="#52606D"
+                               uuid="8215c7f7-e67c-4c8c-82a7-184df3cf1d75"/>
+                <text><![CDATA[Répartition :]]></text>
+            </staticText>
+            <textField isStretchWithOverflow="true">
+                <reportElement x="145" y="340" width="402" height="48"
+                               uuid="794dcc1e-ea51-416b-83c7-607df00ddffc"/>
+                <textFieldExpression><![CDATA[$P{allocationDetails}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="392" width="145" height="22" forecolor="#52606D"
+                               uuid="46424b39-a44e-470f-845b-761bf6852476"/>
+                <text><![CDATA[Crédit conservé :]]></text>
+            </staticText>
+            <textField pattern="#,##0">
+                <reportElement x="145" y="392" width="402" height="22"
+                               uuid="e588be7d-cffa-4b79-9aa4-125cf5e26f43"/>
+                <textFieldExpression><![CDATA[$P{creditAmount}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    <summary>
+        <band height="70">
+            <line>
+                <reportElement x="0" y="0" width="547" height="1" forecolor="#D9E2EC"
+                               uuid="07dc5ce8-dde1-4604-ad1b-6557db760004"/>
+            </line>
+            <staticText>
+                <reportElement x="0" y="12" width="145" height="22" forecolor="#52606D"
+                               uuid="496c783a-218e-41bf-95da-1f93a62fb97c"/>
+                <text><![CDATA[Validé par :]]></text>
+            </staticText>
+            <textField>
+                <reportElement x="145" y="12" width="402" height="22"
+                               uuid="db028014-a87a-4ccc-a073-8e1de74e1173"/>
+                <textFieldExpression><![CDATA[$P{managerName}]]></textFieldExpression>
+            </textField>
+            <staticText>
+                <reportElement x="0" y="42" width="547" height="20" forecolor="#52606D"
+                               uuid="f66172e8-76a8-457b-83b8-61f825874e6a"/>
+                <textElement textAlignment="Center">
+                    <font size="9" isItalic="true"/>
+                </textElement>
+                <text><![CDATA[Cette quittance confirme la validation du paiement indiqué ci-dessus.]]></text>
+            </staticText>
+        </band>
+    </summary>
+</jasperReport>

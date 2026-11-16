@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:pt="jakarta.faces.passthrough"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Mon profil</ui:define>
+    <ui:define name="content">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h1 class="h3 mb-1 text-gray-800">Mon profil</h1>
+                <span class="text-gray-600">Coordonnées du compte — #{profile.role}</span>
+            </div>
+        </div>
+
+        <h:messages id="messages" styleClass="alert alert-info" infoClass="text-success"
+                    errorClass="text-danger" warnClass="text-warning"/>
+
+        <div class="row justify-content-center">
+            <div class="col-xl-8 col-lg-10">
+                <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h2 class="h6 m-0 font-weight-bold text-primary">Modifier mes coordonnées</h2>
+                        </div>
+                        <div class="card-body">
+                            <h:form styleClass="crud-page">
+                                <div class="form-group">
+                                    <h:outputLabel for="name" value="Nom complet"/>
+                                    <h:inputText id="name" value="#{profile.name}"
+                                                 styleClass="form-control" required="true"
+                                                 requiredMessage="Le nom est obligatoire."
+                                                 pt:maxlength="120" pt:autocomplete="name"/>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputLabel for="email" value="Adresse courriel"/>
+                                    <h:inputText id="email" value="#{profile.email}"
+                                                 styleClass="form-control" required="true"
+                                                 requiredMessage="L’adresse courriel est obligatoire."
+                                                 pt:type="email" pt:maxlength="254"
+                                                 pt:autocomplete="email"/>
+                                    <small class="form-text text-muted">Cette adresse sert aussi à vous connecter.</small>
+                                </div>
+                                <h:panelGroup layout="block" styleClass="form-group"
+                                              rendered="#{profile.client}">
+                                    <h:outputLabel for="phone" value="Téléphone"/>
+                                    <h:inputText id="phone" value="#{profile.phone}"
+                                                 styleClass="form-control" pt:type="tel"
+                                                 pt:maxlength="32" pt:autocomplete="tel"/>
+                                </h:panelGroup>
+                                <hr/>
+                                <h3 class="h6 font-weight-bold text-gray-800">Changer le mot de passe</h3>
+                                <p class="form-text text-muted">
+                                    Laissez ces champs vides pour conserver votre mot de passe actuel.
+                                </p>
+                                <div class="form-group">
+                                    <h:outputLabel for="currentPassword" value="Mot de passe actuel"/>
+                                    <div class="input-group password-input-group">
+                                        <h:inputSecret id="currentPassword"
+                                                       value="#{profile.currentPassword}"
+                                                       styleClass="form-control" redisplay="false"
+                                                       pt:autocomplete="current-password"/>
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-secondary"
+                                                    data-password-toggle="true" aria-pressed="false"
+                                                    aria-label="Afficher le mot de passe"
+                                                    title="Afficher le mot de passe">
+                                                <i class="fas fa-eye" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputLabel for="newPassword" value="Nouveau mot de passe"/>
+                                    <div class="input-group password-input-group">
+                                        <h:inputSecret id="newPassword"
+                                                       value="#{profile.newPassword}"
+                                                       styleClass="form-control" redisplay="false"
+                                                       pt:autocomplete="new-password"/>
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-secondary"
+                                                    data-password-toggle="true" aria-pressed="false"
+                                                    aria-label="Afficher le mot de passe"
+                                                    title="Afficher le mot de passe">
+                                                <i class="fas fa-eye" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <small class="form-text text-muted">Au moins 8 caractères.</small>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputLabel for="passwordConfirmation"
+                                                   value="Confirmer le nouveau mot de passe"/>
+                                    <div class="input-group password-input-group">
+                                        <h:inputSecret id="passwordConfirmation"
+                                                       value="#{profile.passwordConfirmation}"
+                                                       styleClass="form-control" redisplay="false"
+                                                       pt:autocomplete="new-password"/>
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-outline-secondary"
+                                                    data-password-toggle="true" aria-pressed="false"
+                                                    aria-label="Afficher le mot de passe"
+                                                    title="Afficher le mot de passe">
+                                                <i class="fas fa-eye" aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <h:outputText value="Le rôle et le compte ne sont pas modifiés depuis cette page."
+                                                  styleClass="form-text text-muted"/>
+                                </div>
+                                <h:commandButton action="#{profile.save}" value="Enregistrer"
+                                                 styleClass="btn btn-primary"/>
+                                <h:link outcome="/client/dashboard.xhtml" value="Retour"
+                                        styleClass="btn btn-light" rendered="#{profile.client}"/>
+                                <h:link outcome="/manager/dashboard.xhtml" value="Retour au tableau de bord"
+                                        styleClass="btn btn-light" rendered="#{auth.manager}"/>
+                                <h:link outcome="/welcomeJSF.xhtml" value="Retour au tableau de bord"
+                                        styleClass="btn btn-light" rendered="#{auth.admin}"/>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    </ui:define>
+</ui:composition>

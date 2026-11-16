@@ -1,0 +1,803 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Fiche utilisateur</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Fiche utilisateur</h1>
+            <h:form styleClass="crud-page">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Identifiant:"/>
+                    <h:outputText value="#{users.users.id}" title="Identifiant" />
+                    <h:outputText value="Nom:"/>
+                    <h:outputText value="#{users.users.name}" title="Nom" />
+                    <h:outputText value="Courriel:"/>
+                    <h:outputText value="#{users.users.email}" title="Courriel" />
+                    <h:outputText value="Rôle:"/>
+                    <h:outputText value="#{users.users.role}" title="Rôle" />
+                    <h:outputText value="Actif:"/>
+                    <h:outputText value="#{users.users.active}" title="Actif" />
+                    <h:outputText value="Créé le:"/>
+                    <h:outputText value="#{users.users.createdAt}" title="Créé le" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                    <h:outputText value="Client:"/>
+                    <h:panelGroup>
+                        <h:outputText value="#{users.users.clientId.name}"/>
+                        <h:panelGroup rendered="#{users.users.clientId != null}">
+                            <h:outputText value=" ("/>
+                            <h:commandLink value="Consulter" action="#{clients.detailSetup}">
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentClients" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users.clientId][clients.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="users"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Modifier" action="#{clients.editSetup}">
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentClients" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users.clientId][clients.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="users"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Supprimer" action="#{clients.destroy}">
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentClients" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users.clientId][clients.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="users"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController"/>
+                            </h:commandLink>
+                            <h:outputText value=" )"/>
+                        </h:panelGroup>
+                    </h:panelGroup>
+
+                    <h:outputText value="Demandes de création de client:" />
+                    <h:panelGroup>
+                        <h:outputText rendered="#{empty users.users.clientCreationRequestsList}" value="(No Items)"/>
+                        <h:dataTable value="#{users.users.clientCreationRequestsList}" var="item" 
+                                     border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px" 
+                                     rendered="#{not empty users.users.clientCreationRequestsList}">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Identifiant"/>
+                                </f:facet>
+                                <h:outputText value="#{item.id}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Nom"/>
+                                </f:facet>
+                                <h:outputText value="#{item.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Courriel"/>
+                                </f:facet>
+                                <h:outputText value="#{item.email}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Téléphone"/>
+                                </f:facet>
+                                <h:outputText value="#{item.phone}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Statut"/>
+                                </f:facet>
+                                <h:outputText value="#{item.status}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Créé le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.createdAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Traité le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reviewedAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Créé par"/>
+                                </f:facet>
+                                <h:outputText value="#{item.createdBy.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Traité par"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reviewedBy.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText escape="false" value="&#160;"/>
+                                </f:facet>
+                                <h:commandLink value="Consulter" action="#{clientCreationRequests.detailSetup}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentClientCreationRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][clientCreationRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Modifier" action="#{clientCreationRequests.editSetup}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentClientCreationRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][clientCreationRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Supprimer" action="#{clientCreationRequests.destroy}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentClientCreationRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][clientCreationRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGroup>
+                    <h:outputText value="Demande de création de client:" />
+                    <h:panelGroup>
+                        <h:outputText rendered="#{empty users.users.clientCreationRequestsList1}" value="(No Items)"/>
+                        <h:dataTable value="#{users.users.clientCreationRequestsList1}" var="item" 
+                                     border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px" 
+                                     rendered="#{not empty users.users.clientCreationRequestsList1}">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Identifiant"/>
+                                </f:facet>
+                                <h:outputText value="#{item.id}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Nom"/>
+                                </f:facet>
+                                <h:outputText value="#{item.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Courriel"/>
+                                </f:facet>
+                                <h:outputText value="#{item.email}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Téléphone"/>
+                                </f:facet>
+                                <h:outputText value="#{item.phone}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Statut"/>
+                                </f:facet>
+                                <h:outputText value="#{item.status}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Créé le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.createdAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Traité le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reviewedAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Créé par"/>
+                                </f:facet>
+                                <h:outputText value="#{item.createdBy.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Traité par"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reviewedBy.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText escape="false" value="&#160;"/>
+                                </f:facet>
+                                <h:commandLink value="Consulter" action="#{clientCreationRequests.detailSetup}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentClientCreationRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][clientCreationRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Modifier" action="#{clientCreationRequests.editSetup}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentClientCreationRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][clientCreationRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Supprimer" action="#{clientCreationRequests.destroy}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentClientCreationRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][clientCreationRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGroup>
+                    <h:outputText value="Demandes de paiement:" />
+                    <h:panelGroup>
+                        <h:outputText rendered="#{empty users.users.paymentRequestsList}" value="(No Items)"/>
+                        <h:dataTable value="#{users.users.paymentRequestsList}" var="item" 
+                                     border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px" 
+                                     rendered="#{not empty users.users.paymentRequestsList}">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Identifiant"/>
+                                </f:facet>
+                                <h:outputText value="#{item.id}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Montant total"/>
+                                </f:facet>
+                                <h:outputText value="#{item.total}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre d’échéances"/>
+                                </f:facet>
+                                <h:outputText value="#{item.installmentCount}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Statut"/>
+                                </f:facet>
+                                <h:outputText value="#{item.status}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Note"/>
+                                </f:facet>
+                                <h:outputText value="#{item.note}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Canal"/>
+                                </f:facet>
+                                <h:outputText value="#{item.channel}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Créé le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.createdAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Traité le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reviewedAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Montant convenu"/>
+                                </f:facet>
+                                <h:outputText value="#{item.agreedTotal}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Client"/>
+                                </f:facet>
+                                <h:outputText value="#{item.clientId.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Échéancier"/>
+                                </f:facet>
+                                <h:outputText value="#{item.scheduleId.reference}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Demandeur"/>
+                                </f:facet>
+                                <h:outputText value="#{item.requesterId.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Traité par"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reviewedBy.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText escape="false" value="&#160;"/>
+                                </f:facet>
+                                <h:commandLink value="Consulter" action="#{paymentRequests.detailSetup}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Modifier" action="#{paymentRequests.editSetup}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Supprimer" action="#{paymentRequests.destroy}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGroup>
+                    <h:outputText value="Demande de paiement:" />
+                    <h:panelGroup>
+                        <h:outputText rendered="#{empty users.users.paymentRequestsList1}" value="(No Items)"/>
+                        <h:dataTable value="#{users.users.paymentRequestsList1}" var="item" 
+                                     border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px" 
+                                     rendered="#{not empty users.users.paymentRequestsList1}">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Identifiant"/>
+                                </f:facet>
+                                <h:outputText value="#{item.id}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Montant total"/>
+                                </f:facet>
+                                <h:outputText value="#{item.total}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre d’échéances"/>
+                                </f:facet>
+                                <h:outputText value="#{item.installmentCount}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Statut"/>
+                                </f:facet>
+                                <h:outputText value="#{item.status}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Note"/>
+                                </f:facet>
+                                <h:outputText value="#{item.note}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Canal"/>
+                                </f:facet>
+                                <h:outputText value="#{item.channel}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Créé le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.createdAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Traité le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reviewedAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Montant convenu"/>
+                                </f:facet>
+                                <h:outputText value="#{item.agreedTotal}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Client"/>
+                                </f:facet>
+                                <h:outputText value="#{item.clientId.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Échéancier"/>
+                                </f:facet>
+                                <h:outputText value="#{item.scheduleId.reference}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Demandeur"/>
+                                </f:facet>
+                                <h:outputText value="#{item.requesterId.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Traité par"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reviewedBy.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText escape="false" value="&#160;"/>
+                                </f:facet>
+                                <h:commandLink value="Consulter" action="#{paymentRequests.detailSetup}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Modifier" action="#{paymentRequests.editSetup}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Supprimer" action="#{paymentRequests.destroy}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentRequests.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGroup>
+                    <h:outputText value="Échéanciers:" />
+                    <h:panelGroup>
+                        <h:outputText rendered="#{empty users.users.paymentSchedulesList}" value="(No Items)"/>
+                        <h:dataTable value="#{users.users.paymentSchedulesList}" var="item" 
+                                     border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px" 
+                                     rendered="#{not empty users.users.paymentSchedulesList}">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Identifiant"/>
+                                </f:facet>
+                                <h:outputText value="#{item.id}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Référence"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reference}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Montant total"/>
+                                </f:facet>
+                                <h:outputText value="#{item.total}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Statut de confirmation"/>
+                                </f:facet>
+                                <h:outputText value="#{item.confirmationStatus}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Créé le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.createdAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Demandes de paiement"/>
+                                </f:facet>
+                                <h:outputText value="#{item.paymentRequests}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Client"/>
+                                </f:facet>
+                                <h:outputText value="#{item.clientId.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Gestionnaire"/>
+                                </f:facet>
+                                <h:outputText value="#{item.managerId.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText escape="false" value="&#160;"/>
+                                </f:facet>
+                                <h:commandLink value="Consulter" action="#{paymentSchedules.detailSetup}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentSchedules" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSchedules.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Modifier" action="#{paymentSchedules.editSetup}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentSchedules" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSchedules.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Supprimer" action="#{paymentSchedules.destroy}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentSchedules" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSchedules.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGroup>
+                    <h:outputText value="Paiements soumis:" />
+                    <h:panelGroup>
+                        <h:outputText rendered="#{empty users.users.paymentSubmissionsList}" value="(No Items)"/>
+                        <h:dataTable value="#{users.users.paymentSubmissionsList}" var="item" 
+                                     border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px" 
+                                     rendered="#{not empty users.users.paymentSubmissionsList}">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Identifiant"/>
+                                </f:facet>
+                                <h:outputText value="#{item.id}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Montant"/>
+                                </f:facet>
+                                <h:outputText value="#{item.amount}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Canal"/>
+                                </f:facet>
+                                <h:outputText value="#{item.channel}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Référence"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reference}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Note"/>
+                                </f:facet>
+                                <h:outputText value="#{item.note}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Statut"/>
+                                </f:facet>
+                                <h:outputText value="#{item.status}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Motif"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reason}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Soumis le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.submittedAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Traité le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reviewedAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Client"/>
+                                </f:facet>
+                                <h:outputText value="#{item.installmentId.scheduleId.clientId.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Échéance"/>
+                                </f:facet>
+                                <h:outputText value="#{item.installmentId.scheduleId.reference} — échéance #{item.installmentId.installmentNumber}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Traité par"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reviewedBy.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="SubmittedBy"/>
+                                </f:facet>
+                                <h:outputText value="#{item.submittedBy.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText escape="false" value="&#160;"/>
+                                </f:facet>
+                                <h:commandLink value="Consulter" action="#{paymentSubmissions.detailSetup}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Modifier" action="#{paymentSubmissions.editSetup}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Supprimer" action="#{paymentSubmissions.destroy}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGroup>
+                    <h:outputText value="Paiement soumis:" />
+                    <h:panelGroup>
+                        <h:outputText rendered="#{empty users.users.paymentSubmissionsList1}" value="(No Items)"/>
+                        <h:dataTable value="#{users.users.paymentSubmissionsList1}" var="item" 
+                                     border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px" 
+                                     rendered="#{not empty users.users.paymentSubmissionsList1}">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Identifiant"/>
+                                </f:facet>
+                                <h:outputText value="#{item.id}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Montant"/>
+                                </f:facet>
+                                <h:outputText value="#{item.amount}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Canal"/>
+                                </f:facet>
+                                <h:outputText value="#{item.channel}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Référence"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reference}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Note"/>
+                                </f:facet>
+                                <h:outputText value="#{item.note}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Statut"/>
+                                </f:facet>
+                                <h:outputText value="#{item.status}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Motif"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reason}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Soumis le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.submittedAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Traité le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reviewedAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Client"/>
+                                </f:facet>
+                                <h:outputText value="#{item.installmentId.scheduleId.clientId.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Échéance"/>
+                                </f:facet>
+                                <h:outputText value="#{item.installmentId.scheduleId.reference} — échéance #{item.installmentId.installmentNumber}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Traité par"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reviewedBy.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="SubmittedBy"/>
+                                </f:facet>
+                                <h:outputText value="#{item.submittedBy.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText escape="false" value="&#160;"/>
+                                </f:facet>
+                                <h:commandLink value="Consulter" action="#{paymentSubmissions.detailSetup}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Modifier" action="#{paymentSubmissions.editSetup}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Supprimer" action="#{paymentSubmissions.destroy}">
+                                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="users" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.UsersController" />
+                                </h:commandLink>
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGroup>
+
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{users.destroy}" value="Supprimer">
+                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}" />
+                </h:commandLink>
+                <br />
+                <br />
+                <h:commandLink action="#{users.editSetup}" value="Modifier">
+                    <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][users.users][users.converter].jsfcrud_invoke}" />
+                </h:commandLink>
+                <br />
+                <h:commandLink action="#{users.createSetup}" value="Créer un utilisateur" />
+                <br />
+                <h:commandLink action="#{users.listSetup}" value="Retour à la liste"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+            </h:form>
+    </ui:define>
+</ui:composition>

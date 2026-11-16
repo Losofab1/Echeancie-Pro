@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+xmlns:pt="jakarta.faces.passthrough"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Créer un client</ui:define>
+    <ui:define name="content">
+<h1>Créer un client</h1>
+            <h:messages errorStyle="color: red" infoStyle="color: green"/>
+            <h:form styleClass="crud-page">
+                <h:panelGrid columns="2">
+                    <h:outputLabel for="name" value="Nom"/>
+                    <h:inputText id="name" value="#{clients.clients.name}" required="true"/>
+                    <h:outputLabel for="email" value="Courriel"/>
+                    <h:inputText id="email" value="#{clients.clients.email}" required="true"
+                                 pt:type="email" pt:autocomplete="email"/>
+                    <h:outputLabel for="newPassword" value="Mot de passe du client"/>
+                    <h:panelGroup layout="block" styleClass="input-group password-input-group">
+                        <h:inputSecret id="newPassword" value="#{clients.newPassword}"
+                                       required="true" redisplay="false"
+                                       requiredMessage="Le mot de passe du compte est obligatoire."
+                                       styleClass="form-control"
+                                       pt:autocomplete="new-password"/>
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-outline-secondary"
+                                    data-password-toggle="true" aria-pressed="false"
+                                    aria-label="Afficher le mot de passe"
+                                    title="Afficher le mot de passe">
+                                <i class="fas fa-eye" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </h:panelGroup>
+                    <h:outputLabel for="phone" value="Telephone"/>
+                    <h:inputText id="phone" value="#{clients.clients.phone}"/>
+                    <h:outputLabel for="sms" value="Rappels SMS"/>
+                    <h:selectBooleanCheckbox id="sms" value="#{clients.clients.smsRemindersEnabled}"/>
+                    <h:outputLabel for="emailReminders" value="Rappels par courriel"/>
+                    <h:selectBooleanCheckbox id="emailReminders" value="#{clients.clients.emailRemindersEnabled}"/>
+                </h:panelGrid>
+                <p class="form-help">
+                    Un compte CLIENT actif sera créé avec cette adresse. Le mot de passe sera haché avant l’enregistrement.
+                </p>
+                <h:commandButton action="#{clients.create}" value="Creer le client"/>
+                <br/>
+                <h:commandLink action="#{clients.listSetup}" value="Retour aux clients" immediate="true"/>
+            </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,27 @@
+# Reverse proxy HTTPS automatique (Let's Encrypt) — nécessite Docker Compose >= 2.24.
+services:
+  app:
+    # Le port n'est plus exposé sur l'hôte : seul Caddy atteint l'application.
+    ports: !reset []
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: echean-caddy
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      ECHEAN_DOMAIN: ${ECHEAN_DOMAIN:?Définissez ECHEAN_DOMAIN dans .env (ex. echean.exemple.com)}
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - echean
+
+volumes:
+  caddy_data:
+  caddy_config:

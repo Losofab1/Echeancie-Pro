@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Échéances demandées</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Échéances demandées</h1>
+            <h:form styleClass="jsfcrud_list_form">
+                <h:outputText escape="false" value="Aucun élément à afficher&lt;br /&gt;" rendered="#{paymentRequestInstallments.pagingInfo.itemCount == 0}" />
+                <h:panelGroup rendered="#{paymentRequestInstallments.pagingInfo.itemCount > 0}">
+                    <h:outputText value="Éléments #{paymentRequestInstallments.pagingInfo.firstItem + 1} à #{paymentRequestInstallments.pagingInfo.lastItem} sur #{paymentRequestInstallments.pagingInfo.itemCount}"/>&#160;
+                    <h:commandLink action="#{paymentRequestInstallments.prev}" value="Précédent #{paymentRequestInstallments.pagingInfo.batchSize}" rendered="#{paymentRequestInstallments.pagingInfo.firstItem >= paymentRequestInstallments.pagingInfo.batchSize}"/>&#160;
+                    <h:commandLink action="#{paymentRequestInstallments.next}" value="Suivant #{paymentRequestInstallments.pagingInfo.batchSize}" rendered="#{paymentRequestInstallments.pagingInfo.lastItem + paymentRequestInstallments.pagingInfo.batchSize &lt;= paymentRequestInstallments.pagingInfo.itemCount}"/>&#160;
+                    <h:commandLink action="#{paymentRequestInstallments.next}" value="Restant #{paymentRequestInstallments.pagingInfo.itemCount - paymentRequestInstallments.pagingInfo.lastItem}"
+                                   rendered="#{paymentRequestInstallments.pagingInfo.lastItem &lt; paymentRequestInstallments.pagingInfo.itemCount &amp;&amp; paymentRequestInstallments.pagingInfo.lastItem + paymentRequestInstallments.pagingInfo.batchSize > paymentRequestInstallments.pagingInfo.itemCount}"/>
+                    <div class="table-responsive crud-table-wrap"><h:dataTable value="#{paymentRequestInstallments.paymentRequestInstallmentsItems}" var="item" border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px" styleClass="table crud-table align-middle">
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Identifiant"/>
+                            </f:facet>
+                            <h:outputText value="#{item.id}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Numéro d’échéance"/>
+                            </f:facet>
+                            <h:outputText value="#{item.installmentNumber}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Date d’échéance"/>
+                            </f:facet>
+                            <h:outputText value="#{item.dueDate}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Client"/>
+                            </f:facet>
+                            <h:outputText value="#{item.requestId.clientId.name}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Demande"/>
+                            </f:facet>
+                            <h:outputText value="Demande du #{item.requestId.createdAt}">
+                                <f:convertDateTime pattern="dd/MM/yyyy"/>
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText escape="false" value="&#160;"/>
+                            </f:facet>
+                            <h:commandLink value="Consulter" action="#{paymentRequestInstallments.detailSetup}">
+                                <f:param name="jsfcrud.currentPaymentRequestInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentRequestInstallments.converter].jsfcrud_invoke}"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Modifier" action="#{paymentRequestInstallments.editSetup}">
+                                <f:param name="jsfcrud.currentPaymentRequestInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentRequestInstallments.converter].jsfcrud_invoke}"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Supprimer" action="#{paymentRequestInstallments.destroy}">
+                                <f:param name="jsfcrud.currentPaymentRequestInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentRequestInstallments.converter].jsfcrud_invoke}"/>
+                            </h:commandLink>
+                        </h:column>
+
+                    </h:dataTable></div>
+                </h:panelGroup>
+                <br />
+                <h:commandLink action="#{paymentRequestInstallments.createSetup}" value="Créer une échéance demandée"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+
+            </h:form>
+    </ui:define>
+</ui:composition>

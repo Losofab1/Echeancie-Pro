@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Modifier une échéance</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Modifier une échéance</h1>
+            <h:form styleClass="crud-page">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Identifiant:"/>
+                    <h:outputText value="#{installments.installments.id}" title="Identifiant" />
+                    <h:outputText value="Numéro d’échéance:"/>
+                    <h:inputText id="installmentNumber" value="#{installments.installments.installmentNumber}" title="Numéro d’échéance" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Montant:"/>
+                    <h:inputText id="amount" value="#{installments.installments.amount}" title="Montant" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Date d’échéance (jj/mm/aaaa):"/>
+                    <h:inputText id="dueDate" value="#{installments.installments.dueDate}" title="Date d’échéance" required="true" requiredMessage="Ce champ est obligatoire." >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:inputText>
+                    <h:outputText value="Payée:"/>
+                    <h:inputText id="paid" value="#{installments.installments.paid}" title="Payée" required="true" requiredMessage="Ce champ est obligatoire." />
+                    <h:outputText value="Réglé le (jj/mm/aaaa hh:mm):"/>
+                    <h:inputText id="paidAt" value="#{installments.installments.paidAt}" title="Réglé le" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:inputText>
+                    <h:outputText value="Canal:"/>
+                    <h:inputText id="channel" value="#{installments.installments.channel}" title="Canal" />
+                    <h:outputText value="Référence de paiement:"/>
+                    <h:inputText id="paymentReference" value="#{installments.installments.paymentReference}" title="Référence de paiement" />
+                    <h:outputText value="Échéancier:"/>
+                    <h:selectOneMenu id="scheduleId" value="#{installments.installments.scheduleId}" title="Échéancier" required="true" requiredMessage="Ce champ est obligatoire." >
+                        <f:selectItems value="#{paymentSchedules.paymentSchedulesItemsAvailableSelectOne}"/>
+                    </h:selectOneMenu>
+                    <h:outputText value="Paiements soumis:"/>
+                    <h:selectManyListbox id="paymentSubmissionsList" value="#{installments.installments.jsfcrud_transform[jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method.collectionToArray][jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method.arrayToList].paymentSubmissionsList}" title="PaymentSubmissionsList" size="6" converter="#{paymentSubmissions.converter}" >
+                        <f:selectItems value="#{paymentSubmissions.paymentSubmissionsItemsAvailableSelectMany}"/>
+                    </h:selectManyListbox>
+
+                </h:panelGrid>
+                <br />
+                <h:commandLink action="#{installments.edit}" value="Save">
+                    <f:param name="jsfcrud.currentInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][installments.installments][installments.converter].jsfcrud_invoke}"/>
+                </h:commandLink>
+                <br />
+                <br />
+                <h:commandLink action="#{installments.detailSetup}" value="Consulter" immediate="true">
+                    <f:param name="jsfcrud.currentInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][installments.installments][installments.converter].jsfcrud_invoke}"/>
+                </h:commandLink>
+                <br />
+                <h:commandLink action="#{installments.listSetup}" value="Retour à la liste" immediate="true"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+            </h:form>
+    </ui:define>
+</ui:composition>

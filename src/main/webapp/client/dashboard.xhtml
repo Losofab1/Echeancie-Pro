@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Mon espace client</ui:define>
+    <ui:define name="content">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h1 class="h3 mb-1 text-gray-800">Mon espace client</h1>
+                <p class="mb-0 text-gray-600">
+                    Bonjour, <h:outputText value="#{auth.user.displayName}"/>.
+                    Accédez à vos demandes, vos échéanciers et vos paiements depuis le menu.
+                </p>
+            </div>
+        </div>
+
+        <h:messages id="messages" styleClass="alert alert-info" infoClass="text-success"
+                    errorClass="text-danger" warnClass="text-warning"/>
+
+        <h:panelGroup layout="block" rendered="#{clientPortal.dashboard ne null}">
+            <h:panelGroup layout="block" rendered="#{clientPortal.dashboard.creditBalance gt 0}">
+                <div class="alert alert-info" role="status">
+                    Crédit client disponible :
+                    <strong><h:outputText value="#{clientPortal.dashboard.creditBalance}"/></strong>
+                    <span class="text-muted"> — à traiter par le gestionnaire.</span>
+                </div>
+            </h:panelGroup>
+
+            <div class="row">
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <h:link outcome="/client/requests.xhtml" styleClass="card shadow h-100 text-decoration-none">
+                        <div class="card-body text-center py-4">
+                            <i class="fas fa-file-invoice-dollar fa-2x text-primary mb-3"></i>
+                            <h2 class="h6 font-weight-bold text-gray-800 mb-2">Mes demandes</h2>
+                            <span class="text-muted small">
+                                Créer une demande d’échéancier et suivre les réponses.
+                            </span>
+                        </div>
+                    </h:link>
+                </div>
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <h:link outcome="/client/schedules.xhtml" styleClass="card shadow h-100 text-decoration-none">
+                        <div class="card-body text-center py-4">
+                            <i class="fas fa-calendar-alt fa-2x text-primary mb-3"></i>
+                            <h2 class="h6 font-weight-bold text-gray-800 mb-2">Mes échéanciers</h2>
+                            <span class="text-muted small">
+                                Consulter vos échéanciers, vos échéances et vos documents.
+                            </span>
+                        </div>
+                    </h:link>
+                </div>
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <h:link outcome="/client/payments.xhtml" styleClass="card shadow h-100 text-decoration-none">
+                        <div class="card-body text-center py-4">
+                            <i class="fas fa-money-check-alt fa-2x text-primary mb-3"></i>
+                            <h2 class="h6 font-weight-bold text-gray-800 mb-2">Mes paiements</h2>
+                            <span class="text-muted small">
+                                Soumettre un règlement et suivre sa validation.
+                            </span>
+                        </div>
+                    </h:link>
+                </div>
+            </div>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

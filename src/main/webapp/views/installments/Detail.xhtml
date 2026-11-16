@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Détail de l’échéance</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Détail de l’échéance</h1>
+            <h:form styleClass="crud-page">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Identifiant:"/>
+                    <h:outputText value="#{installments.installments.id}" title="Identifiant" />
+                    <h:outputText value="Numéro d’échéance:"/>
+                    <h:outputText value="#{installments.installments.installmentNumber}" title="Numéro d’échéance" />
+                    <h:outputText value="Montant:"/>
+                    <h:outputText value="#{installments.installments.amount}" title="Montant" />
+                    <h:outputText value="Date d’échéance:"/>
+                    <h:outputText value="#{installments.installments.dueDate}" title="Date d’échéance" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                    <h:outputText value="Payée:"/>
+                    <h:outputText value="#{installments.installments.paid}" title="Payée" />
+                    <h:outputText value="Réglé le:"/>
+                    <h:outputText value="#{installments.installments.paidAt}" title="Réglé le" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                    <h:outputText value="Canal:"/>
+                    <h:outputText value="#{installments.installments.channel}" title="Canal" />
+                    <h:outputText value="Référence de paiement:"/>
+                    <h:outputText value="#{installments.installments.paymentReference}" title="Référence de paiement" />
+                    <h:outputText value="Client:"/>
+                    <h:outputText value="#{installments.installments.scheduleId.clientId.name}" title="Client"/>
+                    <h:outputText value="Échéancier:"/>
+                    <h:panelGroup>
+                        <h:outputText value="#{installments.installments.scheduleId.reference}"/>
+                        <h:panelGroup rendered="#{installments.installments.scheduleId != null}">
+                            <h:outputText value=" ("/>
+                            <h:commandLink value="Consulter" action="#{paymentSchedules.detailSetup}">
+                                <f:param name="jsfcrud.currentInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][installments.installments][installments.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentPaymentSchedules" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][installments.installments.scheduleId][paymentSchedules.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="installments"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.InstallmentsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Modifier" action="#{paymentSchedules.editSetup}"
+                                           rendered="#{installments.installments.scheduleId.confirmationStatus ne 'CONFIRMED'}">
+                                <f:param name="jsfcrud.currentInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][installments.installments][installments.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentPaymentSchedules" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][installments.installments.scheduleId][paymentSchedules.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="installments"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.InstallmentsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Supprimer" action="#{paymentSchedules.destroy}"
+                                           rendered="#{installments.installments.scheduleId.confirmationStatus ne 'CONFIRMED'}">
+                                <f:param name="jsfcrud.currentInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][installments.installments][installments.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentPaymentSchedules" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][installments.installments.scheduleId][paymentSchedules.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="installments"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.InstallmentsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" )"/>
+                        </h:panelGroup>
+                    </h:panelGroup>
+
+                    <h:outputText value="Paiements soumis:" />
+                    <h:panelGroup>
+                        <h:outputText rendered="#{empty installments.installments.paymentSubmissionsList}" value="(No Items)"/>
+                        <h:dataTable value="#{installments.installments.paymentSubmissionsList}" var="item" 
+                                     border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px" 
+                                     rendered="#{not empty installments.installments.paymentSubmissionsList}">
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Client"/>
+                                </f:facet>
+                                <h:outputText value="#{installments.installments.scheduleId.clientId.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Montant"/>
+                                </f:facet>
+                                <h:outputText value="#{item.amount}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Canal"/>
+                                </f:facet>
+                                <h:outputText value="#{item.channel}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Référence"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reference}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Note"/>
+                                </f:facet>
+                                <h:outputText value="#{item.note}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Statut"/>
+                                </f:facet>
+                                <h:outputText value="#{item.status}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Motif"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reason}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Soumis le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.submittedAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Traité le"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reviewedAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Échéance"/>
+                                </f:facet>
+                                <h:outputText value="Échéance n° #{item.installmentId.installmentNumber}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Traité par"/>
+                                </f:facet>
+                                <h:outputText value="#{item.reviewedBy.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText value="SubmittedBy"/>
+                                </f:facet>
+                                <h:outputText value="#{item.submittedBy.name}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">
+                                    <h:outputText escape="false" value="&#160;"/>
+                                </f:facet>
+                                <h:commandLink value="Consulter" action="#{paymentSubmissions.detailSetup}">
+                                    <f:param name="jsfcrud.currentInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][installments.installments][installments.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="installments" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.InstallmentsController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Modifier" action="#{paymentSubmissions.editSetup}"
+                                                   rendered="#{item.status ne 'APPROVED'}">
+                                    <f:param name="jsfcrud.currentInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][installments.installments][installments.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="installments" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.InstallmentsController" />
+                                </h:commandLink>
+                                <h:outputText value=" "/>
+                                <h:commandLink value="Supprimer" action="#{paymentSubmissions.destroy}"
+                                                   rendered="#{item.status ne 'APPROVED'}">
+                                    <f:param name="jsfcrud.currentInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][installments.installments][installments.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                    <f:param name="jsfcrud.relatedController" value="installments" />
+                                    <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.InstallmentsController" />
+                                </h:commandLink>
+                            </h:column>
+                        </h:dataTable>
+                    </h:panelGroup>
+
+                </h:panelGrid>
+                <br />
+                <h:outputText value="Archivée — échéance validée, historique non modifiable"
+                              styleClass="badge badge-success"
+                              rendered="#{installments.installments.paid or installments.installments.scheduleId.confirmationStatus eq 'CONFIRMED'}"/>
+                <h:commandLink action="#{installments.destroy}" value="Supprimer"
+                               rendered="#{not installments.installments.paid and installments.installments.scheduleId.confirmationStatus ne 'CONFIRMED'}">
+                    <f:param name="jsfcrud.currentInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][installments.installments][installments.converter].jsfcrud_invoke}" />
+                </h:commandLink>
+                <br />
+                <br />
+                <h:commandLink action="#{installments.editSetup}" value="Modifier"
+                               rendered="#{not installments.installments.paid and installments.installments.scheduleId.confirmationStatus ne 'CONFIRMED'}">
+                    <f:param name="jsfcrud.currentInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][installments.installments][installments.converter].jsfcrud_invoke}" />
+                </h:commandLink>
+                <br />
+                <h:commandLink action="#{installments.createSetup}" value="Créer une échéance" />
+                <br />
+                <h:commandLink action="#{installments.listSetup}" value="Retour à la liste"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+            </h:form>
+    </ui:define>
+</ui:composition>

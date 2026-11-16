@@ -1,0 +1,24 @@
+services:
+  app:
+    build: .
+    image: echean/jsf:latest
+    container_name: echean-app
+    restart: unless-stopped
+    environment:
+      # URL JDBC complète de votre branche Neon (avec ?sslmode=require).
+      ECHEAN_DB_URL: ${ECHEAN_DB_URL:?Définissez ECHEAN_DB_URL dans .env}
+      ECHEAN_DB_USER: ${ECHEAN_DB_USER:?Définissez ECHEAN_DB_USER dans .env}
+      ECHEAN_DB_PASSWORD: ${ECHEAN_DB_PASSWORD:?Définissez ECHEAN_DB_PASSWORD dans .env}
+      ECHEAN_SMTP_HOST: ${ECHEAN_SMTP_HOST:-}
+      ECHEAN_SMTP_PORT: ${ECHEAN_SMTP_PORT:-587}
+      ECHEAN_SMTP_USER: ${ECHEAN_SMTP_USER:-}
+      ECHEAN_SMTP_PASSWORD: ${ECHEAN_SMTP_PASSWORD:-}
+      ECHEAN_SMTP_FROM: ${ECHEAN_SMTP_FROM:-}
+    ports:
+      # Par défaut, accessible uniquement depuis la machine hôte.
+      - "127.0.0.1:8080:8080"
+    networks:
+      - echean
+
+networks:
+  echean:

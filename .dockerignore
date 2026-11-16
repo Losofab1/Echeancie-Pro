@@ -1,0 +1,11 @@
+.git
+.gitignore
+.vscode
+nbproject
+nb-configuration.xml
+faces-config.NavData
+target
+*.war
+*.jar
+.DS_Store
+.env

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Détail du paiement soumis</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Détail du paiement soumis</h1>
+            <h:form styleClass="crud-page">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Identifiant:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.id}" title="Identifiant" />
+                    <h:outputText value="Montant:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.amount}" title="Montant" />
+                    <h:outputText value="Canal:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.channel}" title="Canal" />
+                    <h:outputText value="Référence:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.reference}" title="Référence" />
+                    <h:outputText value="Note:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.note}" title="Note" />
+                    <h:outputText value="Statut:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.status}" title="Statut" />
+                    <h:outputText value="Motif:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.reason}" title="Motif" />
+                    <h:outputText value="Soumis le:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.submittedAt}" title="Soumis le" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                    <h:outputText value="Traité le:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.reviewedAt}" title="Traité le" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+                    <h:outputText value="Client:"/>
+                    <h:outputText value="#{paymentSubmissions.paymentSubmissions.installmentId.scheduleId.clientId.name}" title="Client"/>
+                    <h:outputText value="Échéance:"/>
+                    <h:panelGroup>
+                        <h:outputText value="#{paymentSubmissions.paymentSubmissions.installmentId.scheduleId.reference} — échéance #{paymentSubmissions.paymentSubmissions.installmentId.installmentNumber}"/>
+                        <h:panelGroup rendered="#{paymentSubmissions.paymentSubmissions.installmentId != null}">
+                            <h:outputText value=" ("/>
+                            <h:commandLink value="Consulter" action="#{installments.detailSetup}">
+                                <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions.installmentId][installments.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="paymentSubmissions"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentSubmissionsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Modifier" action="#{installments.editSetup}"
+                                           rendered="#{paymentSubmissions.paymentSubmissions.status ne 'APPROVED' and not paymentSubmissions.paymentSubmissions.installmentId.paid and paymentSubmissions.paymentSubmissions.installmentId.scheduleId.confirmationStatus ne 'CONFIRMED'}">
+                                <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions.installmentId][installments.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="paymentSubmissions"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentSubmissionsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Supprimer" action="#{installments.destroy}"
+                                           rendered="#{paymentSubmissions.paymentSubmissions.status ne 'APPROVED' and not paymentSubmissions.paymentSubmissions.installmentId.paid and paymentSubmissions.paymentSubmissions.installmentId.scheduleId.confirmationStatus ne 'CONFIRMED'}">
+                                <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentInstallments" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions.installmentId][installments.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="paymentSubmissions"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentSubmissionsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" )"/>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                    <h:outputText value="Traité par:"/>
+                    <h:panelGroup>
+                        <h:outputText value="#{paymentSubmissions.paymentSubmissions.reviewedBy.name}"/>
+                        <h:panelGroup rendered="#{paymentSubmissions.paymentSubmissions.reviewedBy != null}">
+                            <h:outputText value=" ("/>
+                            <h:commandLink value="Consulter" action="#{users.detailSetup}">
+                                <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions.reviewedBy][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="paymentSubmissions"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentSubmissionsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Modifier" action="#{users.editSetup}"
+                                           rendered="#{paymentSubmissions.paymentSubmissions.status ne 'APPROVED'}">
+                                <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions.reviewedBy][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="paymentSubmissions"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentSubmissionsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Supprimer" action="#{users.destroy}"
+                                           rendered="#{paymentSubmissions.paymentSubmissions.status ne 'APPROVED'}">
+                                <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions.reviewedBy][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="paymentSubmissions"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentSubmissionsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" )"/>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                    <h:outputText value="Soumis par:"/>
+                    <h:panelGroup>
+                        <h:outputText value="#{paymentSubmissions.paymentSubmissions.submittedBy.name}"/>
+                        <h:panelGroup rendered="#{paymentSubmissions.paymentSubmissions.submittedBy != null}">
+                            <h:outputText value=" ("/>
+                            <h:commandLink value="Consulter" action="#{users.detailSetup}">
+                                <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions.submittedBy][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="paymentSubmissions"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentSubmissionsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Modifier" action="#{users.editSetup}"
+                                           rendered="#{paymentSubmissions.paymentSubmissions.status ne 'APPROVED'}">
+                                <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions.submittedBy][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="paymentSubmissions"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentSubmissionsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Supprimer" action="#{users.destroy}"
+                                           rendered="#{paymentSubmissions.paymentSubmissions.status ne 'APPROVED'}">
+                                <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions][paymentSubmissions.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.currentUsers" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions.submittedBy][users.converter].jsfcrud_invoke}"/>
+                                <f:param name="jsfcrud.relatedController" value="paymentSubmissions"/>
+                                <f:param name="jsfcrud.relatedControllerType" value="com.mycompany.jsf.PaymentSubmissionsController"/>
+                            </h:commandLink>
+                            <h:outputText value=" )"/>
+                        </h:panelGroup>
+                    </h:panelGroup>
+
+
+                </h:panelGrid>
+                <br />
+                <h:outputText value="Archivé — paiement validé, historique non modifiable"
+                              styleClass="badge badge-success"
+                              rendered="#{paymentSubmissions.paymentSubmissions.status eq 'APPROVED'}"/>
+                <h:commandLink action="#{paymentSubmissions.destroy}" value="Supprimer"
+                               rendered="#{paymentSubmissions.paymentSubmissions.status ne 'APPROVED'}">
+                    <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions][paymentSubmissions.converter].jsfcrud_invoke}" />
+                </h:commandLink>
+                <br />
+                <br />
+                <h:commandLink action="#{paymentSubmissions.editSetup}" value="Modifier"
+                               rendered="#{paymentSubmissions.paymentSubmissions.status ne 'APPROVED'}">
+                    <f:param name="jsfcrud.currentPaymentSubmissions" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][paymentSubmissions.paymentSubmissions][paymentSubmissions.converter].jsfcrud_invoke}" />
+                </h:commandLink>
+                <br />
+                <h:commandLink action="#{paymentSubmissions.createSetup}" value="Créer un paiement" />
+                <br />
+                <h:commandLink action="#{paymentSubmissions.listSetup}" value="Retour à la liste"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+            </h:form>
+    </ui:define>
+</ui:composition>

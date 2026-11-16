@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Clients</ui:define>
+    <ui:define name="content">
+<h1>Clients</h1>
+            <h:messages errorStyle="color: red" infoStyle="color: green"/>
+            <h:form styleClass="jsfcrud_list_form">
+                <div class="table-responsive crud-table-wrap"><h:dataTable value="#{clients.clientsItems}" var="item" border="1" cellpadding="4" styleClass="table crud-table align-middle">
+                    <h:column>
+                        <f:facet name="header">Nom</f:facet>
+                        <h:outputText value="#{item.name}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Courriel</f:facet>
+                        <h:outputText value="#{item.email}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Telephone</f:facet>
+                        <h:outputText value="#{item.phone}"/>
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Actions</f:facet>
+                        <h:commandLink action="#{clients.detailSetup}" value="Voir">
+                            <f:param name="jsfcrud.currentClients" value="#{item.id}"/>
+                        </h:commandLink>
+                        <h:outputText value=" | "/>
+                        <h:commandLink action="#{clients.editSetup}" value="Modifier">
+                            <f:param name="jsfcrud.currentClients" value="#{item.id}"/>
+                        </h:commandLink>
+                        <h:outputText value=" | "/>
+                        <h:commandLink action="#{clients.destroy}" value="Supprimer">
+                            <f:param name="jsfcrud.currentClients" value="#{item.id}"/>
+                        </h:commandLink>
+                    </h:column>
+                </h:dataTable></div>
+                <br/>
+                <h:commandLink action="#{clients.createSetup}" value="Nouveau client"/>
+                <br/>
+                <h:commandLink action="welcome" value="Accueil" immediate="true"/>
+            </h:form>
+    </ui:define>
+</ui:composition>

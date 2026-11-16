@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Modifier un client</ui:define>
+    <ui:define name="content">
+<h1>Modifier un client</h1>
+            <h:messages errorStyle="color: red" infoStyle="color: green"/>
+            <h:form styleClass="crud-page">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Identifiant"/>
+                    <h:outputText value="#{clients.clients.id}"/>
+                    <h:outputLabel for="name" value="Nom"/>
+                    <h:inputText id="name" value="#{clients.clients.name}" required="true"/>
+                    <h:outputLabel for="email" value="Courriel"/>
+                    <h:inputText id="email" value="#{clients.clients.email}" required="true"/>
+                    <h:outputLabel for="phone" value="Telephone"/>
+                    <h:inputText id="phone" value="#{clients.clients.phone}"/>
+                    <h:outputLabel for="sms" value="Rappels SMS"/>
+                    <h:selectBooleanCheckbox id="sms" value="#{clients.clients.smsRemindersEnabled}"/>
+                    <h:outputLabel for="emailReminders" value="Rappels par courriel"/>
+                    <h:selectBooleanCheckbox id="emailReminders" value="#{clients.clients.emailRemindersEnabled}"/>
+                </h:panelGrid>
+                <h:commandButton action="#{clients.edit}" value="Enregistrer">
+                    <f:param name="jsfcrud.currentClients" value="#{clients.clients.id}"/>
+                </h:commandButton>
+                <br/>
+                <h:commandLink action="#{clients.detailSetup}" value="Annuler" immediate="true">
+                    <f:param name="jsfcrud.currentClients" value="#{clients.clients.id}"/>
+                </h:commandLink>
+            </h:form>
+    </ui:define>
+</ui:composition>

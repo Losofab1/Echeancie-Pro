@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                xmlns:pt="jakarta.faces.passthrough"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Créer un utilisateur</ui:define>
+    <ui:define name="content">
+        <h:panelGroup id="messagePanel" layout="block">
+            <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+        </h:panelGroup>
+        <h1>Créer un utilisateur</h1>
+        <h:form styleClass="crud-page">
+            <h:inputHidden id="validateCreateField"
+                           validator="#{users.validateCreate}" value="value"/>
+            <h:panelGrid columns="2">
+                <h:outputLabel for="name" value="Nom complet"/>
+                <h:inputText id="name" value="#{users.users.name}" required="true"
+                             requiredMessage="Le nom est obligatoire."/>
+                <h:outputLabel for="email" value="Adresse courriel"/>
+                <h:inputText id="email" value="#{users.users.email}" required="true"
+                             requiredMessage="L’adresse courriel est obligatoire."
+                             pt:type="email" pt:autocomplete="email"/>
+                <h:outputLabel for="newPassword" value="Mot de passe"/>
+                <h:panelGroup layout="block" styleClass="input-group password-input-group">
+                    <h:inputSecret id="newPassword" value="#{users.newPassword}"
+                                   required="true" redisplay="false"
+                                   requiredMessage="Le mot de passe est obligatoire."
+                                   styleClass="form-control"
+                                   pt:autocomplete="new-password"/>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-outline-secondary"
+                                data-password-toggle="true" aria-pressed="false"
+                                aria-label="Afficher le mot de passe"
+                                title="Afficher le mot de passe">
+                            <i class="fas fa-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </h:panelGroup>
+                <h:outputLabel for="role" value="Rôle"/>
+                <h:selectOneMenu id="role" value="#{users.users.role}" required="true">
+                    <f:selectItem itemLabel="Choisir un rôle" noSelectionOption="true"/>
+                    <f:selectItem itemLabel="Administrateur" itemValue="ADMIN"/>
+                    <f:selectItem itemLabel="Gestionnaire" itemValue="MANAGER"/>
+                </h:selectOneMenu>
+            </h:panelGrid>
+            <p class="form-help">Le compte sera activé immédiatement. Les comptes CLIENT se créent depuis la fiche client.</p>
+            <p class="form-help">Utilisez au moins 8 caractères pour le mot de passe.</p>
+            <h:commandButton action="#{users.create}" value="Créer l’utilisateur"
+                             styleClass="btn btn-primary"/>
+            <h:link outcome="/views/users/List" value="Annuler"
+                    styleClass="btn btn-light"/>
+        </h:form>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Mes échéanciers</ui:define>
+    <ui:define name="content">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h1 class="h3 mb-1 text-gray-800">Mes échéanciers</h1>
+                <p class="mb-0 text-gray-600">
+                    Consultez vos échéanciers, téléchargez vos documents et suivez vos échéances.
+                </p>
+            </div>
+        </div>
+
+        <h:messages id="messages" styleClass="alert alert-info" infoClass="text-success"
+                    errorClass="text-danger" warnClass="text-warning"/>
+
+        <h:panelGroup layout="block" rendered="#{clientPortal.dashboard ne null}">
+            <div id="client-schedules" class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h2 class="h6 m-0 font-weight-bold text-primary">Mes échéanciers</h2>
+                </div>
+                <div class="card-body table-responsive">
+                    <h:form>
+                        <h:dataTable value="#{clientPortal.dashboard.schedules}" var="item"
+                                     styleClass="table table-bordered table-hover">
+                            <h:column><f:facet name="header">Référence</f:facet>
+                                <h:outputText value="#{item.reference}"/>
+                            </h:column>
+                            <h:column><f:facet name="header">Montant total</f:facet>
+                                <h:outputText value="#{item.total}"/>
+                            </h:column>
+                            <h:column><f:facet name="header">État</f:facet>
+                                <h:outputText value="#{item.statusLabel}"/>
+                            </h:column>
+                            <h:column><f:facet name="header">Créé le</f:facet>
+                                <h:outputText value="#{item.createdAt}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                </h:outputText>
+                            </h:column>
+                            <h:column><f:facet name="header">Documents</f:facet>
+                                <h:commandButton action="#{paymentScheduleReport.downloadPdf}"
+                                                 value="Échéancier PDF"
+                                                 styleClass="btn btn-outline-danger btn-sm mr-1">
+                                    <f:param name="scheduleId" value="#{item.id}"/>
+                                </h:commandButton>
+                                <h:commandButton action="#{paymentScheduleReport.downloadExcel}"
+                                                 value="Excel"
+                                                 styleClass="btn btn-outline-success btn-sm">
+                                    <f:param name="scheduleId" value="#{item.id}"/>
+                                </h:commandButton>
+                            </h:column>
+                        </h:dataTable>
+                    </h:form>
+                    <h:outputText value="Aucun échéancier." rendered="#{empty clientPortal.dashboard.schedules}"/>
+                </div>
+            </div>
+
+            <div id="client-installments" class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h2 class="h6 m-0 font-weight-bold text-primary">Mes échéances</h2>
+                </div>
+                <div class="card-body table-responsive">
+                    <h:dataTable value="#{clientPortal.dashboard.installments}" var="item"
+                                 styleClass="table table-bordered table-hover">
+                        <h:column><f:facet name="header">Échéancier</f:facet>
+                            <h:outputText value="#{item.scheduleReference}"/>
+                        </h:column>
+                        <h:column><f:facet name="header">N°</f:facet>
+                            <h:outputText value="#{item.number}"/>
+                        </h:column>
+                        <h:column><f:facet name="header">Échéance</f:facet>
+                            <h:outputText value="#{item.dueDate}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                        </h:column>
+                        <h:column><f:facet name="header">Montant</f:facet>
+                            <h:outputText value="#{item.amount}"/>
+                        </h:column>
+                        <h:column><f:facet name="header">Solde à payer</f:facet>
+                            <h:outputText value="#{item.remaining}"/>
+                        </h:column>
+                        <h:column><f:facet name="header">État</f:facet>
+                            <h:outputText value="#{item.paid ? 'Réglée' : 'À régler'}"/>
+                        </h:column>
+                    </h:dataTable>
+                    <h:outputText value="Aucune échéance." rendered="#{empty clientPortal.dashboard.installments}"/>
+                </div>
+            </div>
+        </h:panelGroup>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:f="jakarta.faces.core"
+                xmlns:h="jakarta.faces.html"
+                template="/WEB-INF/templates/main.xhtml">
+    <ui:define name="title">Demandes de création de client</ui:define>
+    <ui:define name="content">
+<h:panelGroup id="messagePanel" layout="block">
+                <h:messages errorStyle="color: red" infoStyle="color: green" layout="table"/>
+            </h:panelGroup>
+            <h1>Demandes de création de client</h1>
+            <h:form styleClass="jsfcrud_list_form">
+                <h:outputText escape="false" value="Aucun élément à afficher&lt;br /&gt;" rendered="#{clientCreationRequests.pagingInfo.itemCount == 0}" />
+                <h:panelGroup rendered="#{clientCreationRequests.pagingInfo.itemCount > 0}">
+                    <h:outputText value="Éléments #{clientCreationRequests.pagingInfo.firstItem + 1} à #{clientCreationRequests.pagingInfo.lastItem} sur #{clientCreationRequests.pagingInfo.itemCount}"/>&#160;
+                    <h:commandLink action="#{clientCreationRequests.prev}" value="Précédent #{clientCreationRequests.pagingInfo.batchSize}" rendered="#{clientCreationRequests.pagingInfo.firstItem >= clientCreationRequests.pagingInfo.batchSize}"/>&#160;
+                    <h:commandLink action="#{clientCreationRequests.next}" value="Suivant #{clientCreationRequests.pagingInfo.batchSize}" rendered="#{clientCreationRequests.pagingInfo.lastItem + clientCreationRequests.pagingInfo.batchSize &lt;= clientCreationRequests.pagingInfo.itemCount}"/>&#160;
+                    <h:commandLink action="#{clientCreationRequests.next}" value="Restant #{clientCreationRequests.pagingInfo.itemCount - clientCreationRequests.pagingInfo.lastItem}"
+                                   rendered="#{clientCreationRequests.pagingInfo.lastItem &lt; clientCreationRequests.pagingInfo.itemCount &amp;&amp; clientCreationRequests.pagingInfo.lastItem + clientCreationRequests.pagingInfo.batchSize > clientCreationRequests.pagingInfo.itemCount}"/>
+                    <div class="table-responsive crud-table-wrap"><h:dataTable value="#{clientCreationRequests.clientCreationRequestsItems}" var="item" border="0" cellpadding="2" cellspacing="0" rowClasses="jsfcrud_odd_row,jsfcrud_even_row" rules="all" style="border:solid 1px" styleClass="table crud-table align-middle">
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Identifiant"/>
+                            </f:facet>
+                            <h:outputText value="#{item.id}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Nom"/>
+                            </f:facet>
+                            <h:outputText value="#{item.name}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Courriel"/>
+                            </f:facet>
+                            <h:outputText value="#{item.email}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Téléphone"/>
+                            </f:facet>
+                            <h:outputText value="#{item.phone}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Statut"/>
+                            </f:facet>
+                            <h:outputText value="#{item.status}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Créé le"/>
+                            </f:facet>
+                            <h:outputText value="#{item.createdAt}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Traité le"/>
+                            </f:facet>
+                            <h:outputText value="#{item.reviewedAt}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Créé par"/>
+                            </f:facet>
+                            <h:outputText value="#{item.createdBy.name}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText value="Traité par"/>
+                            </f:facet>
+                            <h:outputText value="#{item.reviewedBy.name}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">
+                                <h:outputText escape="false" value="&#160;"/>
+                            </f:facet>
+                            <h:commandLink value="Consulter" action="#{clientCreationRequests.detailSetup}">
+                                <f:param name="jsfcrud.currentClientCreationRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][clientCreationRequests.converter].jsfcrud_invoke}"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Modifier" action="#{clientCreationRequests.editSetup}">
+                                <f:param name="jsfcrud.currentClientCreationRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][clientCreationRequests.converter].jsfcrud_invoke}"/>
+                            </h:commandLink>
+                            <h:outputText value=" "/>
+                            <h:commandLink value="Supprimer" action="#{clientCreationRequests.destroy}">
+                                <f:param name="jsfcrud.currentClientCreationRequests" value="#{jsfcrud_class['com.mycompany.jsf.util.JsfUtil'].jsfcrud_method['getAsConvertedString'][item][clientCreationRequests.converter].jsfcrud_invoke}"/>
+                            </h:commandLink>
+                        </h:column>
+
+                    </h:dataTable></div>
+                </h:panelGroup>
+                <br />
+                <h:commandLink action="#{clientCreationRequests.createSetup}" value="Créer une demande de client"/>
+                <br />
+                <br />
+                <h:commandLink value="Tableau de bord" action="welcome" immediate="true" />
+
+
+            </h:form>
+    </ui:define>
+</ui:composition>
