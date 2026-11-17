@@ -26,6 +26,7 @@ COPY --chown=jboss:root --from=build /build/target/JSF-1.0-SNAPSHOT.war \
 # ECHEAN_PSQL_URL (postgresql://user:pass@host/db?sslmode=require).
 COPY --chown=jboss:jboss --chmod=0755 docker/wildfly/entrypoint.sh /opt/jboss/entrypoint.sh
 ENTRYPOINT ["/opt/jboss/entrypoint.sh"]
-CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0"]
+# Exemple de commande de fin dans votre Dockerfile
+CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "0.0.0.0"]
 
 EXPOSE 8080
