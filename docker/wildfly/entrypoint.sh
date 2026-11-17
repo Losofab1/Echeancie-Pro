@@ -57,6 +57,14 @@ if [ -z "${ECHEAN_DB_URL:-}" ] && [ -n "${ECHEAN_PSQL_URL:-}" ]; then
     export ECHEAN_DB_URL ECHEAN_DB_USER ECHEAN_DB_PASSWORD
 fi
 
+# Render (et d'autres plateformes) injecte PORT : WildFly doit écouter dessus.
+# standalone.xml utilise ${jboss.http.port:8080} pour le socket-binding http.
+if [ -n "${PORT:-}" ]; then
+    JAVA_OPTS="${JAVA_OPTS:-} -Djboss.http.port=${PORT}"
+    export JAVA_OPTS
+    echo "Binding HTTP sur le port ${PORT} (variable PORT)."
+fi
+
 # Chaîne l'entrypoint de l'image de base (import des certificats CA, nécessaire
 # pour les connexions TLS vers Neon). Il se termine lui-même par un « exec "$@" ».
 if [ -x /__cacert_entrypoint.sh ]; then

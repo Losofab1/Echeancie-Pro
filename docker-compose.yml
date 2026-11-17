@@ -5,6 +5,8 @@ services:
     container_name: echean-app
     restart: unless-stopped
     environment:
+      # Port HTTP (Render injecte PORT=8081 ; défaut 8080 en local).
+      PORT: ${PORT:-8080}
       # URL JDBC complète de votre branche Neon (avec ?sslmode=require).
       ECHEAN_DB_URL: ${ECHEAN_DB_URL:?Définissez ECHEAN_DB_URL dans .env}
       ECHEAN_DB_USER: ${ECHEAN_DB_USER:?Définissez ECHEAN_DB_USER dans .env}
@@ -16,7 +18,7 @@ services:
       ECHEAN_SMTP_FROM: ${ECHEAN_SMTP_FROM:-}
     ports:
       # Par défaut, accessible uniquement depuis la machine hôte.
-      - "127.0.0.1:8080:8080"
+      - "127.0.0.1:${PORT:-8080}:${PORT:-8080}"
     networks:
       - echean
 
