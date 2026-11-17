@@ -7,8 +7,8 @@ RUN mvn -q -DskipTests package \
  && mvn -q dependency:get -Dartifact=org.postgresql:postgresql:42.7.14 \
  && cp /root/.m2/repository/org/postgresql/postgresql/42.7.14/postgresql-42.7.14.jar /tmp/postgresql.jar
 
-# ---- Étape 2 : image WildFly 41 (Jakarta EE 11) ----
-FROM quay.io/wildfly/wildfly:34.0.1.Final-jdk17
+# ---- Étape 2 : image WildFly 40.0.1 (Jakarta EE 11 sur Java 17) ----
+FROM quay.io/wildfly/wildfly:40.0.1.Final-jdk17
 
 # Module JDBC PostgreSQL (le WAR n'embarque pas le pilote : il est fourni par le serveur).
 COPY --from=build /tmp/postgresql.jar /tmp/postgresql.jar

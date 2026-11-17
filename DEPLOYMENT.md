@@ -1,6 +1,6 @@
-# Déploiement Docker — Echean (WildFly 41 + PostgreSQL Neon)
+# Déploiement Docker — Echean (WildFly 40.0.1 + PostgreSQL Neon)
 
-L'application tourne dans un conteneur WildFly 41 (Jakarta EE 11) et se connecte à une
+L'application tourne dans un conteneur WildFly 40.0.1 (Jakarta EE 11) et se connecte à une
 **base PostgreSQL managée Neon**. Deux scénarios : partir d'une base Neon vide, ou
 migrer votre base locale existante (schéma + données).
 
@@ -30,7 +30,7 @@ C'est tout. Les sections ci-dessous expliquent chaque étape en détail si besoi
 | Service | Image | Rôle |
 |---|---|---|
 | Neon | managé | Base `neondb`, schéma + données, sauvegardes automatiques |
-| `app` | build local (Maven → WildFly 41) | Application JSF, WAR en racine `/`, datasource `java:jboss/datasources/echeanDS` |
+| `app` | build local (Maven → WildFly 40.0.1) | Application JSF, WAR en racine `/`, datasource `java:jboss/datasources/echeanDS` |
 | `caddy` *(optionnel)* | `caddy:2-alpine` | Reverse proxy HTTPS automatique (Let's Encrypt) |
 
 Le WAR n'embarque pas le pilote PostgreSQL : l'image WildFly installe le module

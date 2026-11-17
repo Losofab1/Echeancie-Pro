@@ -93,7 +93,7 @@ public class InstallmentsJpaController implements Serializable {
     }
 
     private void ensureNotLocked(Installments installment) {
-        if (installment.isPaid()) {
+        if (installment.getPaid()) {
             throw new IllegalStateException(
                     "Une échéance réglée ne peut plus être modifiée ni supprimée.");
         }
