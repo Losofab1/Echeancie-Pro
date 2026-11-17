@@ -33,6 +33,11 @@ if [ -z "${ECHEAN_DB_URL:-}" ] && [ -n "${ECHEAN_PSQL_URL:-}" ]; then
         query=""
     fi
 
+    # pgjdbc attend « channelBinding » (camelCase) et rejette le paramètre
+    # « channel_binding » utilisé par psql : on le retire de l'URL JDBC.
+    query=$(printf '%s' "$query" \
+        | sed 's/&channel_binding=[^&]*//; s/^channel_binding=[^&]*&//; s/^channel_binding=[^&]*$//')
+
     hostport=${hostdb%/*}
     database=${hostdb##*/}
 
