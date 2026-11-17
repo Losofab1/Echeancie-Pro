@@ -12,13 +12,11 @@ FROM quay.io/wildfly/wildfly:40.0.1.Final-jdk17
 
 # Module JDBC PostgreSQL (le WAR n'embarque pas le pilote : il est fourni par le serveur).
 COPY --from=build /tmp/postgresql.jar /tmp/postgresql.jar
-RUN /opt/jboss/wildfly/bin/jboss-cli.sh --command="module add --name=org.postgresql --resources=/tmp/postgresql.jar --dependencies=java.logging,java.sql,java.xml" \
- && rm /tmp/postgresql.jar
+RUN /opt/jboss/wildfly/bin/jboss-cli.sh --command="module add --name=org.postgresql --resources=/tmp/postgresql.jar --dependencies=java.logging,java.sql,java.xml"
 
 # Source de données java:jboss/datasources/echeanDS (valeurs injectées par les variables d'environnement).
 COPY docker/wildfly/configure.cli /tmp/configure.cli
-RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/tmp/configure.cli \
- && rm /tmp/configure.cli
+RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/tmp/configure.cli
 
 # Déploiement enraciné : l'application répond sur / au lieu de /JSF-1.0-SNAPSHOT.
 COPY --chown=jboss:root --from=build /build/target/JSF-1.0-SNAPSHOT.war \
