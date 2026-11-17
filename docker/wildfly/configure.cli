@@ -1,6 +1,11 @@
 # Configuration de la source de données PostgreSQL pour l'application Echean.
 # Exécuté au build de l'image (mode embed-server, sans démarrer le serveur).
 embed-server --server-config=standalone.xml
+
+# Désactive la page d'accueil WildFly : elle masque le déploiement ROOT.war.
+/subsystem=undertow/server=default-server/host=default-host/location=\/:remove()
+/subsystem=undertow/configuration=handler/file=welcome-content:remove()
+
 /subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-class-name=org.postgresql.Driver)
 /subsystem=datasources/data-source=echeanDS:add(jndi-name="java:jboss/datasources/echeanDS",enabled=true,use-java-context=true,connection-url="${env.ECHEAN_DB_URL}",driver-name="postgresql",user-name="${env.ECHEAN_DB_USER}",password="${env.ECHEAN_DB_PASSWORD}",min-pool-size=1,max-pool-size=10,validate-on-match=true,valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker,exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter)
 stop-embedded-server
