@@ -94,6 +94,14 @@ Renseignez **les deux URLs** (même branche Neon) :
 Récupérez l'URI dans le dashboard Neon → **Connection Details** → champ *Connection string*
 (ajoutez `?sslmode=require` s'il manque).
 
+> **Déploiement Render / hébergeur sans `.env`** : définissez les variables dans le tableau
+> de bord du service. L'image accepte **soit** `ECHEAN_DB_URL` (URL JDBC attendue par
+> WildFly), **soit** `ECHEAN_PSQL_URL` (l'URI Neon `postgresql://…`) — dans ce dernier cas,
+> l'entrypoint convertit automatiquement l'URI en JDBC et en déduit
+> `ECHEAN_DB_USER` / `ECHEAN_DB_PASSWORD` si elles ne sont pas définies. Le défaut `db:5432`
+> a été supprimé de l'image : si aucune variable n'est fournie, le démarrage échouera
+> explicitement plutôt que de se connecter à un hôte inexistant.
+
 ## 4A. Base Neon vide — initialiser le schéma
 
 ```bash

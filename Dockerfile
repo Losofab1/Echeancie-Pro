@@ -22,8 +22,10 @@ RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/tmp/configure.cli
 COPY --chown=jboss:root --from=build /build/target/JSF-1.0-SNAPSHOT.war \
      /opt/jboss/wildfly/standalone/deployments/ROOT.war
 
-ENV ECHEAN_DB_URL=jdbc:postgresql://db:5432/echean \
-    ECHEAN_DB_USER=echean \
-    ECHEAN_DB_PASSWORD=change-me
+# Normalise la DB au démarrage : accepte ECHEAN_DB_URL (JDBC) ou l'URI Neon
+# ECHEAN_PSQL_URL (postgresql://user:pass@host/db?sslmode=require).
+COPY --chown=jboss:jboss --chmod=0755 docker/wildfly/entrypoint.sh /opt/jboss/entrypoint.sh
+ENTRYPOINT ["/opt/jboss/entrypoint.sh"]
+CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0"]
 
 EXPOSE 8080
