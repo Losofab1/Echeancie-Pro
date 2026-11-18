@@ -32,7 +32,8 @@ RUN /opt/jboss/wildfly/bin/jboss-cli.sh --command="module add --name=org.postgre
 
 # Source de données java:jboss/datasources/echeanDS (valeurs injectées par les variables d'environnement).
 COPY docker/wildfly/configure.cli /tmp/configure.cli
-RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/tmp/configure.cli
+RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/tmp/configure.cli \
+ && rm -rf /opt/jboss/wildfly/standalone/configuration/standalone_xml_history
 
 # Déploiement enraciné : l'application répond sur / au lieu de /JSF-1.0-SNAPSHOT.
 COPY --chown=jboss:root --from=build /build/target/JSF-1.0-SNAPSHOT.war \
