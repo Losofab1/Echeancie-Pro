@@ -63,6 +63,30 @@ if (outcome == success) of /subsystem=elytron-oidc-client:read-resource()
     /subsystem=elytron-oidc-client:remove()
 end-if
 
+# Observabilité / sécurité inutilisées par cette application (encore actives
+# dans le standalone.xml de WildFly 40 et visibles dans les logs de démarrage).
+if (outcome == success) of /subsystem=microprofile-jwt:read-resource()
+    /subsystem=microprofile-jwt:remove()
+end-if
+
+if (outcome == success) of /subsystem=metrics:read-resource()
+    /subsystem=metrics:remove()
+end-if
+
+if (outcome == success) of /subsystem=health:read-resource()
+    /subsystem=health:remove()
+end-if
+
+# La datasource H2 d'exemple n'est pas utilisée : on retire aussi son pilote
+# (moins de classes chargées, moins de pool ouvert au démarrage).
+if (outcome == success) of /subsystem=datasources/data-source=ExampleDS:read-resource()
+    /subsystem=datasources/data-source=ExampleDS:remove()
+end-if
+
+if (outcome == success) of /subsystem=datasources/jdbc-driver=h2:read-resource()
+    /subsystem=datasources/jdbc-driver=h2:remove()
+end-if
+
 # La datasource reste volontairement avec un pool réduit : chaque connexion
 # PostgreSQL consomme de la mémoire côté JVM et côté Neon.
 /subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-class-name=org.postgresql.Driver)

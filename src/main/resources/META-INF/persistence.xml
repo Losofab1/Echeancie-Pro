@@ -7,6 +7,10 @@
       <!-- Évite que Hibernate interroge Neon au démarrage pour deviner le dialecte :
            si la base est lente/inaccessible, le déploiement restait bloqué ici. -->
       <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+      <!-- Pas de cache de 2e niveau : Infinispan + JGroups sont chargés sinon,
+           ce qui consomme inutilement de la metaspace sur le plan Render 512 Mo. -->
+      <property name="hibernate.cache.use_second_level_cache" value="false"/>
+      <property name="hibernate.cache.use_query_cache" value="false"/>
     </properties>
   </persistence-unit>
 </persistence>

@@ -13,13 +13,16 @@ FROM quay.io/wildfly/wildfly:40.0.1.Final-jdk17
 # Profil mémoire pour le plan gratuit Render (512 Mo RAM au total).
 # Ces valeurs sont des DEFAUTS : une variable JAVA_OPTS définie dans le
 # tableau de bord Render les remplace automatiquement.
-#   -Xms64m  : démarrage rapide, on ne réserve pas 512 Mo inutilement
-#   -Xmx192m : marge pour JasperReports (PDF/XLSX) sous forte charge
-#   Metaspace 128m : WildFly 40 + Jasper dépassent souvent le plafond 96m
-#   UseSerialGC : 1 vCPU sur Render → moins de threads/overhead que G1
+#   -Xms64m / -Xmx160m : tas volontairement réduit (WildFly + Hibernate 7
+#                        sont gourmands en metaspace, pas en tas ici)
+#   Metaspace 320m : mesure réelle sur Render : 128m -> OutOfMemoryError
+#                    pendant la validation des named queries Hibernate
+#   -Xss512k          : ~40 threads WildFly -> 20 Mo de piles au lieu de 40
+#   CodeCache 64m / DirectMemory 64m : bornes natives, sinon JVM réserve plus
+#   UseSerialGC       : 1 vCPU sur Render → moins de threads/overhead que G1
 #   Les 2 derniers flags reproduisent les défauts WildFly écrasés par JAVA_OPTS
 #   (IPv4 obligatoire pour le health-check Render, headless pour JasperReports).
-ENV JAVA_OPTS="-Xms64m -Xmx192m -XX:MetaspaceSize=32m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true"
+ENV JAVA_OPTS="-Xms64m -Xmx160m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=320m -Xss512k -XX:ReservedCodeCacheSize=64m -XX:MaxDirectMemorySize=64m -XX:+UseSerialGC -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true"
 
 # Module JDBC PostgreSQL (le WAR n'embarque pas le pilote : il est fourni par le serveur).
 COPY --from=build /tmp/postgresql.jar /tmp/postgresql.jar

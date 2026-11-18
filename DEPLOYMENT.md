@@ -71,7 +71,7 @@ Deux URLs à renseigner dans `.env` :
   `jdbc:postgresql://<host>/<base>?sslmode=require`
 
 Pour l'application, gardez l'URL **directe** (sans `-pooler`) : le pool WildFly est limité
-à 10 connexions et évite les problèmes de prepared statements avec le pooler de Neon.
+à 5 connexions et évite les problèmes de prepared statements avec le pooler de Neon.
 Si vous tenez absolument à utiliser le point d'accès poolé, ajoutez `&prepareThreshold=0`
 à l'URL JDBC.
 
@@ -98,162 +98,120 @@ Récupérez l'URI dans le dashboard Neon → **Connection Details** → champ *C
 > de bord du service. L'image accepte **soit** `ECHEAN_DB_URL` (URL JDBC attendue par
 > WildFly), **soit** `ECHEAN_PSQL_URL` (l'URI Neon `postgresql://…`) — dans ce dernier cas,
 > l'entrypoint convertit automatiquement l'URI en JDBC et en déduit
-> `ECHEAN_DB_USER` / `ECHEAN_DB_PASSWORD` si elles ne sont pas définies. Le défaut `db:5432`
-> a été supprimé de l'image : si aucune variable n'est fournie, le démarrage échouera
-> explicitement plutôt que de se connecter à un hôte inexistant.
+> `ECHEAN_DB_USER` / `ECHEAN_DB_PASSWORD` **uniquement si elles ne sont pas déjà définies**.
+> Si `ECHEAN_DB_URL` est fournie, elle est utilisée telle quelle et l'URI `ECHEAN_PSQL_URL`
+> est ignorée pour la datasource : vérifiez donc que les deux pointent sur le même hône et
+> que `ECHEAN_DB_USER` / `ECHEAN_DB_PASSWORD` correspondent bien au mot de passe de cet hôte.
+> Le défaut `db:5432` a été supprimé de l'image : si aucune variable n'est fournie, le
+> démarrage échouera explicitement plutôt que de se connecter à un hôte inexistant.
 
 ## 3B. Tenir dans les 512 Mo de RAM du plan gratuit Render
 
 Le problème sur Render n'est pas l'espace disque (le WAR ne fait que ~33 Mo et n'est
-pas écrit dans un volume persistant), mais la **mémoire vive**. Deux leviers sont
-appliqués dans l'image :
+pas écrit dans un volume persistant), mais la **mémoire vive**. Trois leviers sont
+appliqués dans l'image.
 
 ### 1. JVM réduite
 
-Le `Dockerfile` pose une valeur par défaut :
+Valeurs retenues dans le `Dockerfile` après un premier test sur Render :
 
 ```
--Xms64m -Xmx192m -XX:MetaspaceSize=32m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC
+-Xms64m -Xmx160m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=320m
+-Xss512k -XX:ReservedCodeCacheSize=64m -XX:MaxDirectMemorySize=64m
+-XX:+UseSerialGC -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true
 ```
+
+> **Retour d'expérience** : un premier déploiement avec `MaxMetaspaceSize=128m` a
+> échoué avec `OutOfMemoryError: Metaspace` pendant la validation des *named queries*
+> Hibernate (à ~08:36 dans les logs), puis WildFly a tourné en boucle sur des OOM
+> pendant 10 minutes. 128 Mo ne suffisent pas à WildFly 40 + Hibernate 7 ; le tas a
+> donc été réduit à 160 Mo pour laisser de la place à la metaspace dans les 512 Mo.
 
 Si vous préférez piloter ce réglage depuis Render : **Dashboard → votre service →
 Environment → Add Environment Variable** :
 
 | Clé | Valeur |
 |---|---|
-| `JAVA_OPTS` | `-Xms64m -Xmx180m -XX:MetaspaceSize=32m -XX:MaxMetaspaceSize=96m -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true` |
+| `JAVA_OPTS` | la chaîne complète ci-dessus |
 
 Une variable définie dans Render **remplace** la valeur du `Dockerfile`. L'entrypoint
 ajoute ensuite automatiquement `-Djboss.http.port=${PORT}`, ne l'enlevez pas.
-Les deux flags `-Djava.net.preferIPv4Stack=true` et `-Djava.awt.headless=true` sont
+Les flags `-Djava.net.preferIPv4Stack=true` et `-Djava.awt.headless=true` sont
 importants : ils font partie des valeurs par défaut du script `standalone.sh` de
-WildFly, perdues dès que `JAVA_OPTS` est surchargé (IPv4 nécessaire au health-check
-Render, mode headless pour JasperReports).
-
-> **`MaxMetaspaceSize=96m` est limite** : WildFly 40 + JasperReports peuvent dépasser
-> 96 Mo de métadonnées au déploiement. En cas d'`OutOfMemoryError: Metaspace` dans les
-> logs, passez à `-XX:MaxMetaspaceSize=160m`. En cas d'OOM pendant la génération d'un
-> PDF/XLSX, passez `-Xmx` à 256m. Le `UseSerialGC` est conservé : avec 1 vCPU, G1
-> consomme inutilement plus de mémoire native.
+WildFly, perdues dès que `JAVA_OPTS` est surchargé (IPv4 pour le health-check Render,
+mode headless pour JasperReports).
 
 ### 2. Sous-systèmes WildFly inutilisés retirés
 
 `docker/wildfly/configure.cli` supprime au build : `batch-jberet`, `webservices`,
-`mail`, `resource-adapters`, `jdr`, `pojo`, `sar`, `jakarta-data` et
-`elytron-oidc-client` (aucun n'est utilisé par Echean). Le pool JDBC passe aussi de
-10 à 5 connexions.
+`mail`, `resource-adapters`, `jdr`, `pojo`, `sar`, `jakarta-data`,
+`elytron-oidc-client`, `microprofile-jwt`, `metrics` et `health` (aucun n'est utilisé
+par Echean). La datasource H2 d'exemple et son pilote sont aussi retirés, et le pool
+JDBC passe de 10 à 5 connexions.
+
+`persistence.xml` désactive en plus le cache Hibernate de 2e niveau : l'infrastructure
+Infinispan/JGroups n'est ainsi pas initialisée pour l'application.
 
 À noter : le `standalone.xml` fourni par WildFly 40 **ne contient déjà pas**
 `iiop-openjdk` ni `messaging-activemq` (contrairement aux versions précédentes).
-Les commandes correspondantes sont donc protégées par un test d'existence.
+Les commandes correspondantes sont donc protégées par un test d’existence dans le
+fichier CLI : le build reste compatible si l’image de base change de configuration.
 
-## 4A. Base Neon vide — initialiser le schéma
+### 3. Démarrer en local
 
-```bash
-chmod +x scripts/init-db.sh
-./scripts/init-db.sh
-```
-
-Le script applique dans l'ordre les migrations `docker/db/init/00…06` puis crée le compte
-administrateur initial (mot de passe haché en bcrypt via `pgcrypto`, compatible avec
-`PasswordHasher`). Il détecte la présence de la table `users` et ignore les migrations
-si le schéma existe déjà : vous pouvez donc l'exécuter sans risque après une restauration.
-
-## 4B. Migrer la base locale vers Neon (données incluses)
-
-Depuis votre machine Windows (psql installé) :
+Après avoir renseigné `.env` et préparé la base, démarrez l'application :
 
 ```powershell
-$env:ECHEAN_DB_PASSWORD = "<mot de passe PostgreSQL local>"
-.\scripts\export-local-to-neon.ps1 -NeonUrl "postgresql://user:pass@ep-xxx.../neondb?sslmode=require"
-```
-
-Le script :
-1. `pg_dump -Fc` de la base locale `echean` → fichier `echean-neon-<date>.dump`
-2. `pg_restore --clean --if-exists --no-owner --no-privileges` vers Neon
-
-Options utiles :
-- `-DumpOnly` : produit uniquement le dump (pas de restauration)
-- `-RestoreOnly -DumpFile echean-neon-....dump` : rejoue un dump déjà créé
-
-Depuis Linux/macOS ou sans psql local, équivalent en une seule commande :
-
-```bash
-PGPASSWORD=<mot-de-passe-local> pg_dump -h localhost -U postgres -d echean -Fc -f echean.dump
-pg_restore -d "$ECHEAN_PSQL_URL" --clean --if-exists --no-owner --no-privileges --exit-on-error echean.dump
-```
-
-> `--no-owner --no-privileges` est indispensable : l'utilisateur Neon n'est pas le même
-> que le `postgres` local. Le dump inclut déjà les données et la table
-> `flyway_schema_history` : **ne relancez pas les migrations 01-06** (le script
-> `init-db.sh` les ignore automatiquement de toute façon).
-
-## 5. Démarrage de l'application
-
-```bash
 docker compose up -d --build
-docker compose ps
 docker compose logs -f app
 ```
 
-Première connexion : `http://localhost:8080/` avec `ECHEAN_BOOTSTRAP_ADMIN_EMAIL` /
-`ECHEAN_BOOTSTRAP_ADMIN_PASSWORD`. Si vous venez de restaurer un dump, utilisez les
-identifiants de l'administrateur **déjà présent** dans la base locale (le mot de passe
-de l'admin local est conservé tel quel).
+Ouvrez `http://localhost:8080/`. Pour arrêter les conteneurs :
 
-## 6. Passage en production (HTTPS)
+```powershell
+docker compose down
+```
 
-Renseignez `ECHEAN_DOMAIN`, puis :
+Les données restent dans Neon et ne sont pas supprimées par cette commande.
 
-```bash
+### 4. Déploiement avec HTTPS
+
+Pointez les enregistrements DNS `A` et, si nécessaire, `AAAA` de `ECHEAN_DOMAIN`
+vers l'adresse publique du serveur. Ouvrez les ports TCP 80 et 443 dans le pare-feu,
+puis démarrez les deux fichiers Compose :
+
+```powershell
 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 ```
 
-Caddy obtient un certificat Let's Encrypt et l'application n'est plus exposée directement.
-Avec un reverse proxy existant, gardez le `docker-compose.yml` seul et pointez-le vers
-`127.0.0.1:8080`.
+Caddy obtient et renouvelle le certificat TLS automatiquement. L'application n'est
+alors accessible que par Caddy sur le serveur. Consultez les journaux avec
+`docker compose -f docker-compose.yml -f docker-compose.prod.yml logs -f`.
 
-## 7. Sauvegardes et mises à jour
+### 5. Initialiser une base vide
 
-Neon propose des sauvegardes automatiques et la restauration dans le temps (PITR) depuis
-son dashboard — c'est le moyen le plus simple. Sauvegarde manuelle complémentaire :
-
-```bash
-pg_dump "$ECHEAN_PSQL_URL" -Fc -f backup-echean-$(date +%F).dump
-```
-
-Mise à jour de l'application (la base n'est pas touchée) :
+Pour créer le schéma et le premier administrateur dans une base Neon vide, renseignez
+`ECHEAN_PSQL_URL`, `ECHEAN_BOOTSTRAP_ADMIN_EMAIL` et
+`ECHEAN_BOOTSTRAP_ADMIN_PASSWORD` dans `.env`, puis exécutez depuis Bash ou WSL :
 
 ```bash
-git pull
-docker compose up -d --build
+bash scripts/init-db.sh
 ```
 
-## 8. Dépannage
+Le script crée l'administrateur uniquement si la table `users` ne contient encore
+aucun compte. Sur une base restaurée, il conserve les comptes existants. Si le schéma
+est présent mais doit recevoir une nouvelle migration, appliquez cette migration
+explicitement avant de relancer l'application.
 
-| Symptôme | Vérification |
-|---|---|
-| `password authentication failed` | `ECHEAN_DB_USER` / `ECHEAN_DB_PASSWORD` doivent correspondre à l'URI Neon |
-| `SSL connection required` | `?sslmode=require` doit être présent dans `ECHEAN_DB_URL` **et** `ECHEAN_PSQL_URL` |
-| `too many connections` (Neon free) | `max-pool-size` est déjà à 5 dans `docker/wildfly/configure.cli` ; descendre à 3 si besoin puis rebuild |
-| `OutOfMemoryError: Metaspace` au démarrage | passer `MaxMetaspaceSize` à 160m (voir §3B) |
-| `Java heap space` pendant un export PDF/XLSX | passer `-Xmx` à 256m (voir §3B) |
-| Page blanche / 500 | `docker compose logs -f app` |
-| Tables manquantes | relancer `./scripts/init-db.sh` |
-| Certificat HTTPS absent | DNS vers le serveur + ports 80/443 ouverts |
+### 6. Sauvegarde et diagnostic
 
-## 9. Fichiers préparés
+Pour exporter une sauvegarde PostgreSQL au format custom :
 
+```powershell
+pg_dump --format=custom --no-owner --no-privileges --file=echean-backup.dump "$env:ECHEAN_PSQL_URL"
 ```
-Dockerfile                         build Maven + WildFly + module JDBC + datasource
-docker-compose.yml                 application seule (base externe Neon)
-docker-compose.prod.yml            ajout de Caddy (HTTPS)
-docker/caddy/Caddyfile              reverse proxy
-docker/wildfly/configure.cli        pilote + datasource WildFly
-docker/db/init/00…06_*.sql          schéma complet (V1 → V6)
-docker/db/init/07_admin.sql         compte administrateur initial
-scripts/init-db.sh                  initialisation / complétion de la base
-scripts/export-local-to-neon.ps1    export local → Neon
-.env.example, .gitignore, .dockerignore
-DEPLOYMENT.md                       ce guide
-```
+
+Conservez les sauvegardes et le fichier `.env` dans un emplacement privé et distinct
+du dépôt. Pour diagnostiquer un démarrage, vérifiez d'abord les journaux du conteneur
+`app`, la disponibilité de Neon et la correspondance entre les identifiants de
+`ECHEAN_PSQL_URL` et ceux de `ECHEAN_DB_URL` / `ECHEAN_DB_USER` / `ECHEAN_DB_PASSWORD`.
