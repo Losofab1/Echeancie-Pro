@@ -102,6 +102,51 @@ Récupérez l'URI dans le dashboard Neon → **Connection Details** → champ *C
 > a été supprimé de l'image : si aucune variable n'est fournie, le démarrage échouera
 > explicitement plutôt que de se connecter à un hôte inexistant.
 
+## 3B. Tenir dans les 512 Mo de RAM du plan gratuit Render
+
+Le problème sur Render n'est pas l'espace disque (le WAR ne fait que ~33 Mo et n'est
+pas écrit dans un volume persistant), mais la **mémoire vive**. Deux leviers sont
+appliqués dans l'image :
+
+### 1. JVM réduite
+
+Le `Dockerfile` pose une valeur par défaut :
+
+```
+-Xms64m -Xmx192m -XX:MetaspaceSize=32m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC
+```
+
+Si vous préférez piloter ce réglage depuis Render : **Dashboard → votre service →
+Environment → Add Environment Variable** :
+
+| Clé | Valeur |
+|---|---|
+| `JAVA_OPTS` | `-Xms64m -Xmx180m -XX:MetaspaceSize=32m -XX:MaxMetaspaceSize=96m -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true` |
+
+Une variable définie dans Render **remplace** la valeur du `Dockerfile`. L'entrypoint
+ajoute ensuite automatiquement `-Djboss.http.port=${PORT}`, ne l'enlevez pas.
+Les deux flags `-Djava.net.preferIPv4Stack=true` et `-Djava.awt.headless=true` sont
+importants : ils font partie des valeurs par défaut du script `standalone.sh` de
+WildFly, perdues dès que `JAVA_OPTS` est surchargé (IPv4 nécessaire au health-check
+Render, mode headless pour JasperReports).
+
+> **`MaxMetaspaceSize=96m` est limite** : WildFly 40 + JasperReports peuvent dépasser
+> 96 Mo de métadonnées au déploiement. En cas d'`OutOfMemoryError: Metaspace` dans les
+> logs, passez à `-XX:MaxMetaspaceSize=160m`. En cas d'OOM pendant la génération d'un
+> PDF/XLSX, passez `-Xmx` à 256m. Le `UseSerialGC` est conservé : avec 1 vCPU, G1
+> consomme inutilement plus de mémoire native.
+
+### 2. Sous-systèmes WildFly inutilisés retirés
+
+`docker/wildfly/configure.cli` supprime au build : `batch-jberet`, `webservices`,
+`mail`, `resource-adapters`, `jdr`, `pojo`, `sar`, `jakarta-data` et
+`elytron-oidc-client` (aucun n'est utilisé par Echean). Le pool JDBC passe aussi de
+10 à 5 connexions.
+
+À noter : le `standalone.xml` fourni par WildFly 40 **ne contient déjà pas**
+`iiop-openjdk` ni `messaging-activemq` (contrairement aux versions précédentes).
+Les commandes correspondantes sont donc protégées par un test d'existence.
+
 ## 4A. Base Neon vide — initialiser le schéma
 
 ```bash
@@ -190,7 +235,9 @@ docker compose up -d --build
 |---|---|
 | `password authentication failed` | `ECHEAN_DB_USER` / `ECHEAN_DB_PASSWORD` doivent correspondre à l'URI Neon |
 | `SSL connection required` | `?sslmode=require` doit être présent dans `ECHEAN_DB_URL` **et** `ECHEAN_PSQL_URL` |
-| `too many connections` (Neon free) | réduire `max-pool-size` dans `docker/wildfly/configure.cli` (10 au lieu de 20) puis rebuild |
+| `too many connections` (Neon free) | `max-pool-size` est déjà à 5 dans `docker/wildfly/configure.cli` ; descendre à 3 si besoin puis rebuild |
+| `OutOfMemoryError: Metaspace` au démarrage | passer `MaxMetaspaceSize` à 160m (voir §3B) |
+| `Java heap space` pendant un export PDF/XLSX | passer `-Xmx` à 256m (voir §3B) |
 | Page blanche / 500 | `docker compose logs -f app` |
 | Tables manquantes | relancer `./scripts/init-db.sh` |
 | Certificat HTTPS absent | DNS vers le serveur + ports 80/443 ouverts |

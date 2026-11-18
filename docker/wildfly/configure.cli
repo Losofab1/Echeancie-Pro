@@ -6,6 +6,66 @@ embed-server --server-config=standalone.xml
 /subsystem=undertow/server=default-server/host=default-host/location=\/:remove()
 /subsystem=undertow/configuration=handler/file=welcome-content:remove()
 
+# ---------------------------------------------------------------------------
+# Profil allégé pour tenir dans les 512 Mo de RAM du plan gratuit Render.
+# L'application utilise uniquement : Undertow/JSF, CDI (Weld), EJB locales,
+# JPA, JAX-RS, JCA/datasources, Transactions, Elytron et Logging.
+# Les sous-systèmes ci-dessous ne sont pas utilisés : on les retire pour
+# économiser de la mémoire (heap, metaspace et threads).
+#
+# Important : WildFly 40 fournit deja un standalone.xml SANS iiop-openjdk ni
+# messaging-activemq. Les commandes sont donc protegees par un test d'existence
+# (sinon le build Docker s'arreterait sur « WFLYCTL0216: resource not found »).
+# ---------------------------------------------------------------------------
+
+if (outcome == success) of /subsystem=batch-jberet:read-resource()
+    /subsystem=batch-jberet:remove()
+end-if
+
+if (outcome == success) of /subsystem=iiop-openjdk:read-resource()
+    /subsystem=iiop-openjdk:remove()
+end-if
+
+if (outcome == success) of /subsystem=messaging-activemq:read-resource()
+    /subsystem=messaging-activemq:remove()
+end-if
+
+# Présents dans le standalone.xml de WildFly 40 mais inutiles pour Echean.
+if (outcome == success) of /subsystem=webservices:read-resource()
+    /subsystem=webservices:remove()
+end-if
+
+if (outcome == success) of /subsystem=mail:read-resource()
+    /subsystem=mail:remove()
+end-if
+
+if (outcome == success) of /subsystem=resource-adapters:read-resource()
+    /subsystem=resource-adapters:remove()
+end-if
+
+if (outcome == success) of /subsystem=jdr:read-resource()
+    /subsystem=jdr:remove()
+end-if
+
+if (outcome == success) of /subsystem=pojo:read-resource()
+    /subsystem=pojo:remove()
+end-if
+
+if (outcome == success) of /subsystem=sar:read-resource()
+    /subsystem=sar:remove()
+end-if
+
+if (outcome == success) of /subsystem=jakarta-data:read-resource()
+    /subsystem=jakarta-data:remove()
+end-if
+
+if (outcome == success) of /subsystem=elytron-oidc-client:read-resource()
+    /subsystem=elytron-oidc-client:remove()
+end-if
+
+# La datasource reste volontairement avec un pool réduit : chaque connexion
+# PostgreSQL consomme de la mémoire côté JVM et côté Neon.
 /subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-class-name=org.postgresql.Driver)
-/subsystem=datasources/data-source=echeanDS:add(jndi-name="java:jboss/datasources/echeanDS",enabled=true,use-java-context=true,connection-url="${env.ECHEAN_DB_URL}",driver-name="postgresql",user-name="${env.ECHEAN_DB_USER}",password="${env.ECHEAN_DB_PASSWORD}",min-pool-size=1,max-pool-size=10,validate-on-match=true,valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker,exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter)
+/subsystem=datasources/data-source=echeanDS:add(jndi-name="java:jboss/datasources/echeanDS",enabled=true,use-java-context=true,connection-url="${env.ECHEAN_DB_URL}",driver-name="postgresql",user-name="${env.ECHEAN_DB_USER}",password="${env.ECHEAN_DB_PASSWORD}",min-pool-size=1,max-pool-size=5,validate-on-match=true,valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker,exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter)
+
 stop-embedded-server
