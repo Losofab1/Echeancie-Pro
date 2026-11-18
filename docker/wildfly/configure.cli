@@ -92,4 +92,8 @@ end-if
 /subsystem=datasources/jdbc-driver=postgresql:add(driver-name=postgresql,driver-module-name=org.postgresql,driver-class-name=org.postgresql.Driver)
 /subsystem=datasources/data-source=echeanDS:add(jndi-name="java:jboss/datasources/echeanDS",enabled=true,use-java-context=true,connection-url="${env.ECHEAN_DB_URL}",driver-name="postgresql",user-name="${env.ECHEAN_DB_USER}",password="${env.ECHEAN_DB_PASSWORD}",min-pool-size=1,max-pool-size=5,validate-on-match=true,valid-connection-checker-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLValidConnectionChecker,exception-sorter-class-name=org.jboss.jca.adapters.jdbc.extensions.postgres.PostgreSQLExceptionSorter)
 
+# Le WAR demande aussi la datasource EE par défaut lors de la vérification du
+# déploiement. ExampleDS vient d'être retirée : lie le nom standard à PostgreSQL.
+/subsystem=ee/service=default-bindings:write-attribute(name=datasource,value="java:jboss/datasources/echeanDS")
+
 stop-embedded-server
