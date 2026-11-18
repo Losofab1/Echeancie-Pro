@@ -17,12 +17,14 @@ FROM quay.io/wildfly/wildfly:40.0.1.Final-jdk17
 #                        sont gourmands en metaspace, pas en tas ici)
 #   Metaspace 320m : mesure réelle sur Render : 128m -> OutOfMemoryError
 #                    pendant la validation des named queries Hibernate
-#   -Xss512k          : ~40 threads WildFly -> 20 Mo de piles au lieu de 40
+#   -Xss512k          : piles de threads réduites
+#   -XX:ActiveProcessorCount=1 : Render expose 8 processeurs à la JVM, ce qui
+#                        crée inutilement 16 threads I/O et 128 threads de tâches
 #   CodeCache 64m / DirectMemory 64m : bornes natives, sinon JVM réserve plus
 #   UseSerialGC       : 1 vCPU sur Render → moins de threads/overhead que G1
 #   Les 2 derniers flags reproduisent les défauts WildFly écrasés par JAVA_OPTS
 #   (IPv4 obligatoire pour le health-check Render, headless pour JasperReports).
-ENV JAVA_OPTS="-Xms64m -Xmx160m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=320m -Xss512k -XX:ReservedCodeCacheSize=64m -XX:MaxDirectMemorySize=64m -XX:+UseSerialGC -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true"
+ENV JAVA_OPTS="-Xms64m -Xmx160m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=320m -Xss512k -XX:ActiveProcessorCount=1 -XX:ReservedCodeCacheSize=64m -XX:MaxDirectMemorySize=64m -XX:+UseSerialGC -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true"
 
 # Module JDBC PostgreSQL (le WAR n'embarque pas le pilote : il est fourni par le serveur).
 COPY --from=build /tmp/postgresql.jar /tmp/postgresql.jar

@@ -117,7 +117,8 @@ Valeurs retenues dans le `Dockerfile` après un premier test sur Render :
 
 ```
 -Xms64m -Xmx160m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=320m
--Xss512k -XX:ReservedCodeCacheSize=64m -XX:MaxDirectMemorySize=64m
+-Xss512k -XX:ActiveProcessorCount=1
+-XX:ReservedCodeCacheSize=64m -XX:MaxDirectMemorySize=64m
 -XX:+UseSerialGC -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true
 ```
 
@@ -136,7 +137,10 @@ Environment → Add Environment Variable** :
 
 Une variable définie dans Render **remplace** la valeur du `Dockerfile`. L'entrypoint
 ajoute ensuite automatiquement `-Djboss.http.port=${PORT}`, ne l'enlevez pas.
-Les flags `-Djava.net.preferIPv4Stack=true` et `-Djava.awt.headless=true` sont
+`-XX:ActiveProcessorCount=1` évite que WildFly dimensionne ses pools comme s'il
+disposait des 8 processeurs visibles dans le conteneur Render (les journaux
+montraient 16 threads I/O et 128 threads de tâches). Les flags
+`-Djava.net.preferIPv4Stack=true` et `-Djava.awt.headless=true` sont
 importants : ils font partie des valeurs par défaut du script `standalone.sh` de
 WildFly, perdues dès que `JAVA_OPTS` est surchargé (IPv4 pour le health-check Render,
 mode headless pour JasperReports).
