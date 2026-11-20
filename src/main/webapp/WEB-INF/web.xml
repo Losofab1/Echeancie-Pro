@@ -4,6 +4,14 @@
         <param-name>jakarta.faces.DEFAULT_SUFFIX</param-name>
         <param-value>.xhtml</param-value>
     </context-param>
+    <context-param>
+        <param-name>jakarta.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>client</param-value>
+    </context-param>
+    <context-param>
+        <param-name>com.sun.faces.ClientStateSavingPassword</param-name>
+        <param-value>UneCleSecreteLongueEtFixe</param-value>
+    </context-param>
     <filter>
         <filter-name>authenticationFilter</filter-name>
         <filter-class>com.mycompany.jsf.security.AuthenticationFilter</filter-class>
@@ -27,10 +35,13 @@
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
     <session-config>
-        <session-timeout>
-            30
-        </session-timeout>
+        <session-timeout>30</session-timeout>
+        <tracking-mode>COOKIE</tracking-mode>
     </session-config>
+    <error-page>
+        <exception-type>jakarta.faces.application.ViewExpiredException</exception-type>
+        <location>/login.xhtml</location>
+    </error-page>
     <welcome-file-list>
         <welcome-file>welcomeJSF.xhtml</welcome-file>
     </welcome-file-list>
