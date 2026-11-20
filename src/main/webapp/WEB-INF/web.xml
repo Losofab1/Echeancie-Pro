@@ -12,6 +12,10 @@
         <param-name>com.sun.faces.ClientStateSavingPassword</param-name>
         <param-value>UneCleSecreteLongueEtFixe</param-value>
     </context-param>
+    <context-param>
+        <param-name>com.sun.faces.clientStateTimeout</param-name>
+        <param-value>28800</param-value>
+    </context-param>
     <filter>
         <filter-name>authenticationFilter</filter-name>
         <filter-class>com.mycompany.jsf.security.AuthenticationFilter</filter-class>
@@ -35,7 +39,7 @@
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
     <session-config>
-        <session-timeout>30</session-timeout>
+        <session-timeout>480</session-timeout>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
     <error-page>

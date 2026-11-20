@@ -63,10 +63,31 @@ if (outcome == success) of /subsystem=elytron-oidc-client:read-resource()
     /subsystem=elytron-oidc-client:remove()
 end-if
 
+# Supprimés selon le plan déployé : le couplage distributable
+# (distributable-web/distributable-ejb) et MicroProfile (JWT + Config).
+# NOTE : Infinispan n'est PAS retiré : WildFly 40.0.1.Final dépend de son
+# sous-système pour le service distant ejb3 (capacité
+# 'org.wildfly.clustering.infinispan.cache-container.ejb') : sans lui,
+# démarrage impossible (WFLYCTL0369).
+if (outcome == success) of /subsystem=distributable-web:read-resource()
+    /subsystem=distributable-web:remove()
+    /extension=org.wildfly.extension.clustering.web:remove()
+end-if
+
+if (outcome == success) of /subsystem=distributable-ejb:read-resource()
+    /subsystem=distributable-ejb:remove()
+    /extension=org.wildfly.extension.clustering.ejb:remove()
+end-if
+
 # Observabilité / sécurité inutilisées par cette application (encore actives
 # dans le standalone.xml de WildFly 40 et visibles dans les logs de démarrage).
-if (outcome == success) of /subsystem=microprofile-jwt:read-resource()
-    /subsystem=microprofile-jwt:remove()
+if (outcome == success) of /subsystem=microprofile-jwt-smallrye:read-resource()
+    /subsystem=microprofile-jwt-smallrye:remove()
+end-if
+
+if (outcome == success) of /subsystem=microprofile-config-smallrye:read-resource()
+    /subsystem=microprofile-config-smallrye:remove()
+    /extension=org.wildfly.extension.microprofile.config-smallrye:remove()
 end-if
 
 if (outcome == success) of /subsystem=metrics:read-resource()
@@ -95,5 +116,9 @@ end-if
 # Le WAR demande aussi la datasource EE par défaut lors de la vérification du
 # déploiement. ExampleDS vient d'être retirée : lie le nom standard à PostgreSQL.
 /subsystem=ee/service=default-bindings:write-attribute(name=datasource,value="java:jboss/datasources/echeanDS")
+
+# Render termine TLS au niveau du proxy ; transmettre les en-têtes X-Forwarded-*
+# pour que l'application construise des URL et redirections HTTPS correctes.
+/subsystem=undertow/server=default-server/http-listener=default:write-attribute(name=proxy-address-forwarding,value=true)
 
 stop-embedded-server

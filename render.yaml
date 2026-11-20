@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: echeancie-pro
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /login.xhtml
+    envVars:
+      - key: ECHEAN_DB_URL
+        sync: false
+      - key: ECHEAN_DB_USER
+        sync: false
+      - key: ECHEAN_DB_PASSWORD
+        sync: false

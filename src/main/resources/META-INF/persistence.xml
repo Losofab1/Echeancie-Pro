@@ -4,12 +4,9 @@
     <jta-data-source>java:jboss/datasources/echeanDS</jta-data-source>
     <properties>
       <property name="jakarta.persistence.schema-generation.database.action" value="none"/>
-      <!-- Évite que Hibernate interroge Neon au démarrage pour deviner le dialecte :
-           si la base est lente/inaccessible, le déploiement restait bloqué ici. -->
-      <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
-      <!-- Le cache Hibernate de 2e niveau est désactivé. Le sous-système
-           Infinispan de WildFly peut tout de même démarrer pour ses propres
-           services serveur ; ses messages de démarrage sont attendus. -->
+      <!-- Cache Hibernate de 2e niveau désactivé : l'application ne l'utilise
+           pas ; le sous-système Infinispan est retiré du profil allégé
+           (docker/wildfly/configure.cli). -->
       <property name="hibernate.cache.use_second_level_cache" value="false"/>
       <property name="hibernate.cache.use_query_cache" value="false"/>
     </properties>

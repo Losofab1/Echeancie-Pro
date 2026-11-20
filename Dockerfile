@@ -10,21 +10,12 @@ RUN mvn -q -DskipTests package \
 # ---- Étape 2 : image WildFly 40.0.1 (Jakarta EE 11 sur Java 17) ----
 FROM quay.io/wildfly/wildfly:40.0.1.Final-jdk17
 
-# Profil mémoire pour le plan gratuit Render (512 Mo RAM au total).
-# Ces valeurs sont des DEFAUTS : une variable JAVA_OPTS définie dans le
-# tableau de bord Render les remplace automatiquement.
-#   -Xms64m / -Xmx160m : tas volontairement réduit (WildFly + Hibernate 7
-#                        sont gourmands en metaspace, pas en tas ici)
-#   Metaspace 320m : mesure réelle sur Render : 128m -> OutOfMemoryError
-#                    pendant la validation des named queries Hibernate
-#   -Xss512k          : piles de threads réduites
-#   -XX:ActiveProcessorCount=1 : Render expose 8 processeurs à la JVM, ce qui
-#                        crée inutilement 16 threads I/O et 128 threads de tâches
-#   CodeCache 64m / DirectMemory 64m : bornes natives, sinon JVM réserve plus
-#   UseSerialGC       : 1 vCPU sur Render → moins de threads/overhead que G1
-#   Les 2 derniers flags reproduisent les défauts WildFly écrasés par JAVA_OPTS
-#   (IPv4 obligatoire pour le health-check Render, headless pour JasperReports).
-ENV JAVA_OPTS="-Xms64m -Xmx160m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=320m -Xss512k -XX:ActiveProcessorCount=1 -XX:ReservedCodeCacheSize=64m -XX:MaxDirectMemorySize=64m -XX:+UseSerialGC -Dfile.encoding=UTF-8 -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true"
+# Profil mémoire contraint pour Render Free (512 Mo).
+# Totaux visés : heap 192 Mo + metaspace 160 Mo + code cache 48 Mo
+# + mémoire directe 32 Mo + threads (~2 Mo) + natif/divers (~40 à 60 Mo)
+# ≈ 454 à 494 Mo de marge sous 512 Mo.
+# JAVA_OPTS reste surchargeable par l'environnement de la plateforme.
+ENV JAVA_OPTS="-Xms64m -Xmx192m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=160m -XX:ReservedCodeCacheSize=48m -XX:MaxDirectMemorySize=32m -Xss256k -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -XX:CICompilerCount=1 -XX:+ExitOnOutOfMemoryError -Dfile.encoding=UTF-8 -Duser.timezone=Africa/Porto-Novo -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true"
 
 # Module JDBC PostgreSQL (le WAR n'embarque pas le pilote : il est fourni par le serveur).
 COPY --from=build /tmp/postgresql.jar /tmp/postgresql.jar
@@ -32,8 +23,7 @@ RUN /opt/jboss/wildfly/bin/jboss-cli.sh --command="module add --name=org.postgre
 
 # Source de données java:jboss/datasources/echeanDS (valeurs injectées par les variables d'environnement).
 COPY docker/wildfly/configure.cli /tmp/configure.cli
-RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/tmp/configure.cli \
- && rm -rf /opt/jboss/wildfly/standalone/configuration/standalone_xml_history
+RUN /opt/jboss/wildfly/bin/jboss-cli.sh --file=/tmp/configure.cli
 
 # Déploiement enraciné : l'application répond sur / au lieu de /JSF-1.0-SNAPSHOT.
 COPY --chown=jboss:root --from=build /build/target/JSF-1.0-SNAPSHOT.war \
@@ -47,4 +37,4 @@ ENTRYPOINT ["/opt/jboss/entrypoint.sh"]
 # -bmanagement 127.0.0.1 : console HAL jamais exposée publiquement
 CMD ["/opt/jboss/wildfly/bin/standalone.sh", "-b", "0.0.0.0", "-bmanagement", "127.0.0.1"]
 
-EXPOSE 8080
+EXPOSE 10000

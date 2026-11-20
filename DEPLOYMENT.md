@@ -105,7 +105,31 @@ Récupérez l'URI dans le dashboard Neon → **Connection Details** → champ *C
 > Le défaut `db:5432` a été supprimé de l'image : si aucune variable n'est fournie, le
 > démarrage échouera explicitement plutôt que de se connecter à un hôte inexistant.
 
-## 3B. Tenir dans les 512 Mo de RAM du plan gratuit Render
+## 3B. Déployer sur Render
+
+Le dépôt inclut `render.yaml` pour créer le service Web Docker `echeancie-pro` sur
+l'offre gratuite de Render (512 Mo). Dans Render, créez un **Blueprint** depuis le
+dépôt Git et validez ce service. Renseignez ensuite `ECHEAN_DB_URL`, `ECHEAN_DB_USER`
+et `ECHEAN_DB_PASSWORD` dans l'environnement du service avec les mêmes valeurs que
+celles utilisées actuellement sur Fly. Aucun volume Render n'est requis : les données
+restent dans Neon.
+
+Render injecte `PORT` (par défaut 10000). `docker/wildfly/entrypoint.sh` transmet ce
+port à WildFly et le serveur écoute sur `0.0.0.0`; le health check utilise
+`/login.xhtml`, une page accessible sans session. Ne définissez pas `PORT` à 8080 sur
+Render. Après validation du déploiement et de la connexion à Neon, le service Fly peut
+être arrêté séparément depuis Fly.io.
+
+Le listener HTTP Undertow active aussi `proxy-address-forwarding` pour prendre en
+compte le proxy TLS Render et ses en-têtes `X-Forwarded-*` lors de la génération des URL.
+
+L'offre gratuite Render met le service en veille après 15 minutes sans requête et peut
+le redémarrer. Le premier chargement après veille prend donc plus longtemps. Elle
+bloque aussi les connexions SMTP sortantes sur les ports 25, 465 et 587 : l'envoi de
+courriels depuis l'application ne fonctionnera pas sur ce plan si le fournisseur utilise
+l'un de ces ports.
+
+## 3C. Tenir dans les 512 Mo de RAM du plan gratuit Render
 
 Le problème sur Render n'est pas l'espace disque (le WAR ne fait que ~33 Mo et n'est
 pas écrit dans un volume persistant), mais la **mémoire vive**. Trois leviers sont
@@ -116,10 +140,12 @@ appliqués dans l'image.
 Valeurs retenues dans le `Dockerfile` après un premier test sur Render :
 
 ```
--Xms64m -Xmx160m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=320m
--Xss512k -XX:ActiveProcessorCount=1
--XX:ReservedCodeCacheSize=64m -XX:MaxDirectMemorySize=64m
--XX:+UseSerialGC -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true
+-Xms64m -Xmx128m -XX:MetaspaceSize=64m -XX:MaxMetaspaceSize=192m
+-Xss256k -XX:ActiveProcessorCount=1
+-XX:ReservedCodeCacheSize=32m -XX:MaxDirectMemorySize=32m
+-XX:+UseSerialGC -XX:TieredStopAtLevel=1 -XX:+ExitOnOutOfMemoryError
+-Dfile.encoding=UTF-8 -Duser.timezone=Africa/Porto-Novo
+-Djava.net.preferIPv4Stack=true -Djava.awt.headless=true
 ```
 
 > **Retour d'expérience** : un premier déploiement avec `MaxMetaspaceSize=128m` a
@@ -155,6 +181,10 @@ JDBC passe de 10 à 5 connexions.
 
 `persistence.xml` désactive en plus le cache Hibernate de 2e niveau : l'infrastructure
 Infinispan/JGroups n'est ainsi pas initialisée pour l'application.
+
+Le sous-système `mail` est retiré : la recherche dans le code ne trouve pas de transport
+SMTP Jakarta Mail. `EmailOutbox` stocke les messages dans PostgreSQL et ses écrans CRUD
+permettent de les consulter, mais aucun composant d'envoi n'est présent actuellement.
 
 À noter : le `standalone.xml` fourni par WildFly 40 **ne contient déjà pas**
 `iiop-openjdk` ni `messaging-activemq` (contrairement aux versions précédentes).
